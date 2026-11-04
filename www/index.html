@@ -35,19 +35,15 @@ svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-lin
 .lbl{display:flex;align-items:center;justify-content:center;gap:6px}
 .lbl .kk{width:26px;height:26px}
 .hint{align-items:flex-start;gap:8px;padding:2px 14px 6px}
-.hp{flex:1;display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:16px;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);font-size:11px;line-height:1.25;font-weight:700;color:var(--ink);box-shadow:0 6px 14px -10px rgba(76,29,149,.6);animation:pop .5s both}
+.hp{flex:1;display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:16px;background:rgba(255,255,255,.72);font-size:11px;line-height:1.25;font-weight:700;color:var(--ink);box-shadow:0 6px 14px -10px rgba(76,29,149,.6);animation:pop .5s both}
 .hp:nth-child(2){animation-delay:.08s}.hp:nth-child(3){animation-delay:.16s}
 .hi{flex:none;width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-style:normal}
 .hi .kk{width:26px;height:26px}
 .hi.k{background:var(--keep)}.hi.d{background:var(--del)}.hi.g{background:var(--drv)}
 
-/* background blobs */
-.bg{position:fixed;inset:0;overflow:hidden;z-index:0}
-.bg i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:float 14s ease-in-out infinite}
-.bg i:nth-child(1){width:60vmax;height:60vmax;left:-20vmax;top:-20vmax;background:#c4b5fd}
-.bg i:nth-child(2){width:50vmax;height:50vmax;right:-18vmax;top:20vh;background:#fbcfe8;animation-delay:-5s}
-.bg i:nth-child(3){width:55vmax;height:55vmax;left:10vw;bottom:-28vmax;background:#a5f3fc;animation-delay:-9s}
-@keyframes float{50%{transform:translate(6vmax,-4vmax) scale(1.12)}}
+/* background (static gradients: light for WebView) */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60vmax 60vmax at 0% 0%,#d6c9ff,transparent 70%),radial-gradient(50vmax 50vmax at 100% 40%,#fbd0e8,transparent 70%),radial-gradient(55vmax 55vmax at 30% 100%,#b6eefa,transparent 70%),#f4f1ff}
+.bg i{display:none}
 .bg::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,var(--glow),transparent 60%);transition:background .25s}
 
 #app{position:fixed;inset:0;display:flex;flex-direction:column;z-index:1;max-width:560px;margin:auto}
@@ -61,14 +57,14 @@ header{display:flex;align-items:center;gap:8px;padding:calc(var(--st) + 12px) 16
 .chip svg{font-size:14px}
 .chip.upl svg{animation:bob 1s infinite}
 @keyframes bob{50%{transform:translateY(-3px)}}
-.ibtn{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.75);backdrop-filter:blur(10px);display:grid;place-items:center;font-size:20px;box-shadow:0 4px 14px -6px rgba(76,29,149,.35);transition:transform .15s}
+.ibtn{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.75);display:grid;place-items:center;font-size:20px;box-shadow:0 4px 14px -6px rgba(76,29,149,.35);transition:transform .15s}
 .ibtn:active{transform:scale(.88) rotate(20deg)}
 
 main{flex:1;position:relative;min-height:0}
 .view{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;transform:translateY(18px) scale(.985);pointer-events:none;transition:opacity .35s,transform .45s cubic-bezier(.2,.9,.3,1);overflow:hidden}
 .view.active{opacity:1;transform:none;pointer-events:auto}
 
-nav{position:relative;margin:6px 14px calc(var(--sb) + 12px);height:64px;border-radius:24px;background:rgba(255,255,255,.82);backdrop-filter:blur(16px);box-shadow:0 12px 30px -10px rgba(76,29,149,.4);display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
+nav{position:relative;margin:6px 14px calc(var(--sb) + 12px);height:64px;border-radius:24px;background:rgba(255,255,255,.82);box-shadow:0 12px 30px -10px rgba(76,29,149,.4);display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
 nav .ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc(25% - 3px);border-radius:18px;background:var(--acc);transition:transform .45s cubic-bezier(.3,1.3,.4,1);z-index:0;box-shadow:0 6px 16px -4px rgba(236,72,153,.6)}
 nav button{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;font-weight:700;color:var(--sub);transition:color .3s}
 nav button svg{font-size:22px;transition:transform .35s cubic-bezier(.3,1.6,.4,1)}
@@ -82,7 +78,7 @@ nav .dot.show{display:grid}
 .stats b{font-size:13px}
 .bar{flex:1;height:8px;border-radius:9px;background:rgba(124,58,237,.12);overflow:hidden}
 .bar i{display:block;height:100%;width:0;border-radius:9px;background:var(--acc);transition:width .6s cubic-bezier(.2,.9,.3,1)}
-.stackwrap{flex:1;min-height:0;padding:0 18px;display:flex;justify-content:center}
+.stackwrap{flex:1;min-height:0;padding:0 18px;display:flex;justify-content:center;position:relative}
 #stack{position:relative;width:100%;max-width:420px;height:100%}
 .card{position:absolute;inset:0;border-radius:30px;overflow:hidden;background:#fff;box-shadow:0 24px 50px -16px rgba(76,29,149,.45);touch-action:none;will-change:transform;transition:transform .4s cubic-bezier(.2,.9,.3,1),opacity .4s}
 .card.top{cursor:grab}
@@ -109,7 +105,8 @@ nav .dot.show{display:grid}
 .empty.show{display:flex;animation:rise .5s}
 .empty .big{font-size:64px;animation:bob 2s infinite}
 .empty h2{font-size:22px}
-.empty p{color:var(--sub);font-size:14px}
+.empty p{color:var(--sub);font-size:14px;white-space:pre-line;line-height:1.5}
+.empty .btn{min-width:200px}
 .btn{padding:12px 22px;border-radius:16px;color:#fff;font-weight:800;font-size:14px;background:var(--acc);box-shadow:0 10px 20px -8px rgba(236,72,153,.7);transition:transform .15s}
 .btn:active{transform:scale(.94)}
 .btn.line{background:#fff;color:#7c3aed;box-shadow:0 6px 14px -8px rgba(76,29,149,.5)}
@@ -141,7 +138,7 @@ nav .dot.show{display:grid}
 .tile .tag.kp{background:var(--keep)}
 .tile .tag.bl{background:#f59e0b}
 .tile .tag.br{background:#111}
-.bulk{position:absolute;left:12px;right:12px;bottom:8px;padding:10px 12px;border-radius:22px;background:rgba(30,27,75,.94);backdrop-filter:blur(14px);color:#fff;display:flex;align-items:center;gap:8px;transform:translateY(130%);transition:transform .45s cubic-bezier(.3,1.3,.4,1);z-index:5;box-shadow:0 16px 30px -10px rgba(0,0,0,.5)}
+.bulk{position:absolute;left:12px;right:12px;bottom:8px;padding:10px 12px;border-radius:22px;background:rgba(30,27,75,.94);color:#fff;display:flex;align-items:center;gap:8px;transform:translateY(130%);transition:transform .45s cubic-bezier(.3,1.3,.4,1);z-index:5;box-shadow:0 16px 30px -10px rgba(0,0,0,.5)}
 .bulk.show{transform:none}
 .bulk b{flex:1;font-size:13px}
 .bulk button{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:20px;color:#fff;transition:transform .15s}
@@ -190,7 +187,7 @@ nav .dot.show{display:grid}
 .bi .row button.x{background:var(--del);flex:0 0 40px}
 
 /* SHEET / MODAL / TOAST */
-.back{position:fixed;inset:0;background:rgba(30,27,75,.45);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:50}
+.back{position:fixed;inset:0;background:rgba(30,27,75,.55);opacity:0;pointer-events:none;transition:opacity .3s;z-index:50}
 .back.show{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:auto;max-height:88vh;overflow-y:auto;background:#fff;border-radius:30px 30px 0 0;padding:20px 20px calc(var(--sb) + 22px);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.9,.3,1);z-index:51}
 .sheet.show{transform:none}
@@ -212,6 +209,10 @@ nav .dot.show{display:grid}
 #toasts{position:fixed;left:0;right:0;top:calc(var(--st) + 62px);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:70;pointer-events:none}
 .toast{padding:10px 18px;border-radius:99px;background:rgba(30,27,75,.94);color:#fff;font-size:13px;font-weight:700;max-width:90%;animation:tin .4s cubic-bezier(.3,1.5,.4,1),tout .35s 2.6s forwards}
 .toast.err{background:#e11d48}
+#diag{position:fixed;inset:0;z-index:90;background:rgba(30,27,75,.6);display:none;align-items:center;justify-content:center;padding:16px}
+#diag .dbox{background:#fff;border-radius:20px;padding:16px;max-height:80vh;width:100%;max-width:520px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+#diag pre{white-space:pre-wrap;word-break:break-all;font:11px/1.4 monospace;user-select:text;-webkit-user-select:text;color:#111}
+#diag .r{display:flex;gap:8px}
 @keyframes tin{from{transform:translateY(-30px) scale(.8);opacity:0}}
 @keyframes tout{to{transform:translateY(-20px);opacity:0}}
 </style>
@@ -256,7 +257,7 @@ nav .dot.show{display:grid}
     <section class="view active" id="v-deck">
       <div class="stats"><b id="leftTxt">0 รูป</b><div class="bar"><i id="barFill"></i></div></div>
       <div class="stackwrap"><div id="stack"></div>
-        <div class="empty" id="empty"><div class="big">🎉</div><h2 id="emptyT">เก็บกวาดครบแล้ว!</h2><p id="emptyP">ไม่มีรูปที่ต้องตัดสินใจแล้ว</p><button class="btn" id="emptyBtn">สแกนหารูปซ้ำ/เบลอ</button></div>
+        <div class="empty" id="empty"><div class="big">🎉</div><h2 id="emptyT">เก็บกวาดครบแล้ว!</h2><p id="emptyP">ไม่มีรูปที่ต้องตัดสินใจแล้ว</p><button class="btn" id="emptyBtn">สแกนหารูปซ้ำ/เบลอ</button><button class="btn line" id="emptyBtn2" style="display:none"></button></div>
       </div>
       <div class="actions">
         <button class="act u" id="bUndo" aria-label="ย้อนกลับ"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
@@ -326,15 +327,24 @@ nav .dot.show{display:grid}
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn blue" id="drvConn">เชื่อม Google Drive</button>
     <button class="btn line" id="drvOut" style="display:none">ตัดการเชื่อมต่อ</button>
+    <button class="btn line" id="permBtn">ตรวจ/ขอสิทธิ์รูปภาพ</button>
     <button class="btn line" id="resetAll">รีเซ็ตข้อมูลในแอป</button>
+    <button class="btn line" id="diagBtn">ข้อมูลระบบ</button>
   </div>
+  <div class="sub" id="verTxt" style="margin-top:10px"></div>
   <div class="sub" style="margin-top:14px">รูปที่ย้ายจะอยู่ในโฟลเดอร์ “รูปจากมือถือ” บน Drive ของคุณ (สิทธิ์ drive.file เห็นเฉพาะไฟล์ที่แอปสร้าง)</div>
 </div>
 <div class="modal" id="modal"><div class="em" id="mEm">🗑️</div><h3 id="mT"></h3><p id="mP"></p><div class="row"><button class="btn line" id="mNo">ยกเลิก</button><button class="btn red" id="mYes">ตกลง</button></div></div>
 <div id="toasts"></div>
+<div id="diag"><div class="dbox"><b>ข้อมูลระบบ (ส่งให้ผู้พัฒนาได้)</b><pre id="diagTxt"></pre><div class="r"><button class="btn sm line" id="diagCopy">คัดลอก</button><button class="btn sm" id="diagClose">ปิด</button></div></div></div>
 
 <script>
 /* ============ helpers ============ */
+const APP_VER='4.0';
+const LOG=[];
+function dlog(m){try{LOG.push(((performance.now()/1000)|0)+'s '+m);if(LOG.length>120)LOG.shift();console.log('[sc] '+m)}catch(_){}}
+const T=(p,ms)=>new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('timeout')),ms);Promise.resolve(p).then(v=>{clearTimeout(t);res(v)},e=>{clearTimeout(t);rej(e)})});
+const emsg=e=>String((e&&e.message)||e);
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('พื้นที่เก็บข้อมูลเต็ม','err')}}};
@@ -383,24 +393,35 @@ function mockPhotos(){
   }
   return out.reverse().map((p,i)=>(p.date=now-i*3.7*864e5,p))
 }
-async function loadPhotos(){
-  if(native){
-    let perm={granted:false};
-    try{perm=await Promise.race([PM.requestPermission(),new Promise(r=>setTimeout(()=>r({granted:false}),20000))])}catch(e){perm={granted:false}}
-    let r=null,err='';
-    try{r=await PM.getPhotos({limit:3000})}catch(e){err=String((e&&e.message)||e)}
-    if(!r||!r.photos||!r.photos.length){
-      if(err){showEmpty('⚠️','อ่านรูปไม่สำเร็จ',err,'ลองใหม่',()=>init());return false}
-      if(!perm.granted){showEmpty('🔒','ต้องการสิทธิ์เข้าถึงรูป','ถ้าไม่มีหน้าต่างขออนุญาตเด้งขึ้น ให้กดปุ่มด้านล่าง แล้วไปที่ สิทธิ์ → รูปภาพ → อนุญาตทั้งหมด จากนั้นกลับมาที่แอป','เปิดตั้งค่าแอป',async()=>{try{await PM.openSettings()}catch(e){toast('เปิดตั้งค่าไม่ได้','err')}});return false}
-      photos=[];return true
-    }
-    photos=r.photos.map(x=>({...x,src:Capacitor.convertFileSrc(x.uri)}));
-  }else photos=mockPhotos();
-  return true
+let permState={granted:false};
+async function checkPerm(){
+  if(!native)return permState={granted:true};
+  try{permState=await T(PM.checkAccess(),4000)}catch(e){dlog('checkAccess '+emsg(e));permState={granted:false,err:emsg(e)}}
+  return permState
+}
+async function askPerm(){
+  const t0=Date.now();
+  try{await T(PM.requestPermission(),180000)}catch(e){dlog('requestPermission '+emsg(e));await checkPerm();permState.err=emsg(e);return{quick:Date.now()-t0<500}}
+  await checkPerm();return{quick:Date.now()-t0<500}
+}
+async function loadPhotos(ask){
+  if(!native){photos=mockPhotos();return{ok:true}}
+  await checkPerm();let quick=false;
+  if(!permState.granted&&ask){quick=(await askPerm()).quick}
+  if(!permState.granted)return{ok:false,reason:'perm',quick,err:permState.err};
+  let r;
+  try{r=await T(PM.getPhotos({limit:3000}),45000)}catch(e){const m=emsg(e);dlog('getPhotos '+m);if(/no_permission/.test(m))return{ok:false,reason:'perm'};return{ok:false,reason:'error',err:m}}
+  photos=((r&&r.photos)||[]).map(x=>({...x,src:Capacitor.convertFileSrc(x.uri)}));
+  dlog('photos '+photos.length);return{ok:true}
 }
 async function applyInsets(){
   if(!native)return;
-  try{const i=await PM.getInsets();const s=document.documentElement.style;s.setProperty('--st',(i.top||0)+'px');s.setProperty('--sb',(i.bottom||0)+'px')}catch(e){}
+  try{const i=await T(PM.getInsets(),1500);const s=document.documentElement.style;s.setProperty('--st',(i.top||0)+'px');s.setProperty('--sb',(i.bottom||0)+'px')}catch(e){dlog('insets '+emsg(e))}
+}
+async function openAppSettings(){try{await T(PM.openSettings(),4000)}catch(e){toast('เปิดตั้งค่าไม่ได้ ไปที่ ตั้งค่า > แอป > ลบรูป > สิทธิ์ > รูปภาพ','err')}}
+function showPerm(r){
+  showEmpty('🔒','ต้องการสิทธิ์เข้าถึงรูป','แอปต้องอ่านรูปในเครื่องเพื่อให้ปัดเก็บ/ลบได้\nกดปุ่มด้านล่าง แล้วเลือก “อนุญาต”'+(r&&r.quick?'\n(Android ปิดหน้าต่างขอสิทธิ์แล้ว ให้ไปที่ สิทธิ์ > รูปภาพ > อนุญาต)':'')+(permState.err?'\n['+permState.err+']':''),
+    'อนุญาตเข้าถึงรูป',()=>init(true,true),'เปิดตั้งค่าแอป',openAppSettings)
 }
 async function deviceDelete(ids){
   if(!ids.length)return true;
@@ -539,11 +560,18 @@ function chips(){
   const n=bin.length+drive.length;const d=$('#binDot');d.textContent=n>99?'99+':n;d.classList.toggle('show',n>0)
 }
 function setGlow(t){const m={keep:'rgba(34,197,94,.35)',bin:'rgba(255,61,113,.35)',drive:'rgba(59,130,246,.38)'};document.documentElement.style.setProperty('--glow',m[t]||'transparent')}
-function showEmpty(em,t,p,btn,fn){$('#stack').innerHTML='';const e=$('#empty');e.querySelector('.big').textContent=em;$('#emptyT').textContent=t;$('#emptyP').textContent=p;$('#emptyBtn').textContent=btn;$('#emptyBtn').onclick=fn;e.classList.add('show')}
+function showEmpty(em,t,p,btn,fn,btn2,fn2){$('#stack').innerHTML='';const e=$('#empty');e.querySelector('.big').textContent=em;$('#emptyT').textContent=t;$('#emptyP').textContent=p||'';
+  const b=$('#emptyBtn'),b2=$('#emptyBtn2');b.style.display=btn?'':'none';b2.style.display=btn2?'':'none';
+  if(btn){b.textContent=btn;b.onclick=fn}if(btn2){b2.textContent=btn2;b2.onclick=fn2}e.classList.add('show')}
 
 /* ----- DECK ----- */
 let deckList=[],wasEmpty=false;
 function renderDeck(){
+  if(!photos.length){deckList=[];$('#leftTxt').textContent='';$('#barFill').style.width='0%';
+    if(initBusy)showEmpty('⏳','กำลังโหลดรูป…','รอสักครู่');
+    else if(native&&!permState.granted)showPerm();
+    else showEmpty('📭','ไม่พบรูปในเครื่อง','ลองถ่ายรูปหรือตรวจสอบสิทธิ์','โหลดใหม่',()=>init(true,true));
+    return}
   const all=vis(),list=all.filter(p=>!kept.has(p.id));deckList=list;
   const decided=all.length-list.length+bin.length+drive.length;
   $('#leftTxt').textContent='เหลือ '+list.length+' รูป';
@@ -661,20 +689,21 @@ function gridItems(){
   else if(gf==='broken')l=l.filter(p=>scan.broken.has(p.id));
   return l
 }
+const GCOL=['#ff3d71','#3b82f6','#f59e0b','#22c55e','#a855f7','#06b6d4'],GPAGE=90;let gridAll=[],gridShown=0;
+function tileHtml(p,i){const dg=gf==='dup'?dupGroupOf(p.id):-1;const tg=[];
+  if(kept.has(p.id))tg.push('<span class="tag kp">เก็บ</span>');
+  else if(scan.done){if(scan.broken.has(p.id))tg.push('<span class="tag br">เสีย</span>');else if(gf==='blur')tg.push('<span class="tag bl">ไม่ชัด</span>');else if(dupGroupOf(p.id)>=0&&gf!=='dup')tg.push('<span class="tag">ซ้ำ</span>')}
+  return `<div class="tile ${sel.has(p.id)?'sel':''}" data-id="${esc(p.id)}" style="animation-delay:${Math.min(i%GPAGE,24)*.015}s;${dg>=0?'box-shadow:0 0 0 3px '+GCOL[dg%6]:''}"><img loading="lazy" decoding="async" src="${p.src}" alt=""><span class="chk">${IC.check}</span>${tg.join('')}</div>`}
+function drawTiles(){const next=gridAll.slice(gridShown,gridShown+GPAGE);if(!next.length)return;$('#grid').insertAdjacentHTML('beforeend',next.map((p,i)=>tileHtml(p,gridShown+i)).join(''));gridShown+=next.length}
 function renderGrid(){
   $('#chips').innerHTML=FILTERS.map(([k,t])=>`<button class="fc ${gf===k?'on':''}" data-f="${k}">${t}</button>`).join('');
   $$('#chips .fc').forEach(b=>b.onclick=()=>{gf=b.dataset.f;sel.clear();renderGrid()});
-  const items=gridItems();const g=$('#grid');
-  if(!items.length){g.innerHTML='';$('#gScroll').insertAdjacentHTML('beforeend','');g.innerHTML='<div class="none" style="grid-column:1/-1">'+((['dup','blur','broken'].includes(gf)&&!scan.done)?'ยังไม่ได้สแกน ไปแท็บ “สแกน” ก่อน':'ไม่มีรูปในหมวดนี้')+'</div>'}
-  else{
-    const gcol=['#ff3d71','#3b82f6','#f59e0b','#22c55e','#a855f7','#06b6d4'];
-    g.innerHTML=items.map((p,i)=>{const dg=gf==='dup'?dupGroupOf(p.id):-1;const tg=[];
-      if(kept.has(p.id))tg.push('<span class="tag kp">เก็บ</span>');
-      else if(scan.done){if(scan.broken.has(p.id))tg.push('<span class="tag br">เสีย</span>');else if(gf==='blur')tg.push('<span class="tag bl">ไม่ชัด</span>');else if(dupGroupOf(p.id)>=0&&gf!=='dup')tg.push('<span class="tag">ซ้ำ</span>')}
-      return `<div class="tile ${sel.has(p.id)?'sel':''}" data-id="${esc(p.id)}" style="animation-delay:${Math.min(i,24)*.015}s;${dg>=0?'box-shadow:0 0 0 3px '+gcol[dg%6]:''}"><img loading="lazy" decoding="async" src="${p.src}" alt=""><span class="chk">${IC.check}</span>${tg.join('')}</div>`}).join('')
-  }
+  const items=gridItems();const g=$('#grid');gridAll=items;gridShown=0;
+  if(!items.length){g.innerHTML='<div class="none" style="grid-column:1/-1">'+((['dup','blur','broken'].includes(gf)&&!scan.done)?'ยังไม่ได้สแกน ไปแท็บ “สแกน” ก่อน':'ไม่มีรูปในหมวดนี้')+'</div>'}
+  else{g.innerHTML='';drawTiles()}
   updBulk()
 }
+$('#gScroll').addEventListener('scroll',e=>{const t=e.target;if(t.scrollTop+t.clientHeight>t.scrollHeight-700)drawTiles()},{passive:true});
 $('#grid').addEventListener('click',e=>{const t=e.target.closest('.tile');if(!t)return;const id=t.dataset.id;
   if(sel.has(id)){sel.delete(id);t.classList.remove('sel')}else{sel.add(id);t.classList.add('sel');vib(8)}updBulk()});
 function updBulk(){$('#bulkN').textContent='เลือก '+sel.size+' รูป';$('#bulk').classList.toggle('show',sel.size>0)}
@@ -774,23 +803,57 @@ $('#resetAll').onclick=async()=>{if(!await confirmBox({title:'รีเซ็ต
 $$('nav button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
 
 /* ============ init ============ */
-async function init(){
+let initBusy=false;
+async function init(ask,user){
+  if(initBusy)return;initBusy=true;
   try{
-    $('#mode').textContent=native?'':'TEST';
-    await applyInsets();
-    const ok=await loadPhotos();if(!ok)return;
+    $('#mode').textContent=native?'v'+APP_VER:'TEST v'+APP_VER;
+    showEmpty('⏳','กำลังโหลดรูป…','รอสักครู่');
+    applyInsets();
+    const r=await loadPhotos(ask);
+    if(!r.ok){
+      if(r.reason==='perm'){initBusy=false;showPerm(r);if(user&&r.quick){toast('ไปที่ สิทธิ์ > รูปภาพ > อนุญาต แล้วกลับมาที่แอป');openAppSettings()}return}
+      initBusy=false;showEmpty('⚠️','อ่านรูปไม่สำเร็จ',r.err||'','ลองใหม่',()=>init(true,true),'ข้อมูลระบบ',showDiag);return
+    }
     const ids=new Set(photos.map(p=>p.id));
     bin=bin.filter(b=>ids.has(b.id));pending=pending.filter(i=>ids.has(i));
-    if(!photos.length){showEmpty('📭','ไม่พบรูปในเครื่อง','ลองถ่ายรูปหรือตรวจสอบสิทธิ์','โหลดใหม่',init);return}
+    initBusy=false;
+    if(permState.partial)toast('แอปเห็นเฉพาะรูปที่คุณเลือกไว้ ไปตั้งค่าเพื่ออนุญาตทั้งหมด');
     saveAll();refresh();
     if(pending.length)toast('มี '+pending.length+' รูปรอลบออกจากเครื่อง (กดป้ายสีส้มด้านบน)')
-  }catch(e){showEmpty('⚠️','เกิดข้อผิดพลาด',String((e&&e.message)||e),'ลองใหม่',()=>init())}
+  }catch(e){dlog('init '+emsg(e));initBusy=false;showEmpty('⚠️','เกิดข้อผิดพลาด',emsg(e),'ลองใหม่',()=>init(true,true),'ข้อมูลระบบ',showDiag)}
+  finally{initBusy=false}
 }
-window.addEventListener('error',e=>{try{toast('ข้อผิดพลาด: '+(e.message||e),'err')}catch(_){}});
-window.addEventListener('unhandledrejection',e=>{try{toast('ข้อผิดพลาด: '+((e.reason&&e.reason.message)||e.reason),'err')}catch(_){}});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&native){applyInsets();if(!photos.length)init()}});
+
+/* ----- diagnostics ----- */
+async function showDiag(){
+  let info={};if(native){try{info=await T(PM.getInfo(),3000)}catch(e){info={err:emsg(e)}}}
+  $('#diagTxt').textContent=['SwipeClean v'+APP_VER,'native: '+native,'ua: '+navigator.userAgent,'viewport: '+innerWidth+'x'+innerHeight+' dpr '+devicePixelRatio,'plugin: '+JSON.stringify(info),'perm: '+JSON.stringify(permState),'photos: '+photos.length+' bin:'+bin.length+' drive:'+drive.length,'--- log ---'].concat(LOG.slice(-60)).join('\n');
+  $('#diag').style.display='flex'
+}
+$('#diagBtn').onclick=showDiag;$('#diagClose').onclick=()=>{$('#diag').style.display='none'};
+$('#diagCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#diagTxt').textContent);toast('คัดลอกแล้ว')}catch(e){toast('คัดลอกไม่ได้ ถ่ายภาพหน้าจอแทน','err')}};
+$('#permBtn').onclick=()=>{closeSheet();init(true,true)};
+$('#verTxt').textContent='เวอร์ชัน '+APP_VER+(native?'':' (โหมดทดสอบ)');
+(()=>{let n=0,t=0;$('.logo').addEventListener('click',()=>{const now=Date.now();n=now-t<1500?n+1:1;t=now;if(n>=5){n=0;showDiag()}})})();
+
+/* ----- safety net: ถ้า WebView ไม่ยิง click ให้ปุ่ม/ช่องรูป ให้ยิงเอง ----- */
+(()=>{let cur=null;
+  addEventListener('pointerdown',e=>{const t=e.target.closest&&e.target.closest('button,.tile');cur=t?{t,x:e.clientX,y:e.clientY,c:false}:null},true);
+  addEventListener('click',()=>{if(cur)cur.c=true},true);
+  addEventListener('pointerup',e=>{const s=cur;if(!s||Math.hypot(e.clientX-s.x,e.clientY-s.y)>10)return;
+    setTimeout(()=>{if(!s.c&&document.contains(s.t)&&!s.t.disabled){dlog('fallback click on '+(s.t.id||s.t.className));s.c=true;s.t.click()}},600)},true)
+})();
+
+window.addEventListener('error',e=>{dlog('ERR '+(e.message||e));try{toast('ข้อผิดพลาด: '+(e.message||e),'err')}catch(_){}});
+window.addEventListener('unhandledrejection',e=>{const m=(e.reason&&e.reason.message)||e.reason;dlog('REJ '+m);try{toast('ข้อผิดพลาด: '+m,'err')}catch(_){}});
+
+let resumeT=0;
+function onResume(){if(!native)return;const n=Date.now();if(n-resumeT<800)return;resumeT=n;applyInsets();if(!photos.length&&!initBusy)init(false)}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')onResume()});
+window.addEventListener('focus',onResume);
 setTimeout(applyInsets,700);
-init();
+init(true);
 </script>
 </body>
 </html>

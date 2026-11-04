@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.provider.MediaStore;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -49,32 +51,72 @@ import java.util.List;
     name = "PhotoManager",
     permissions = {
         @Permission(alias = "images", strings = { Manifest.permission.READ_MEDIA_IMAGES }),
+        @Permission(alias = "visual", strings = { "android.permission.READ_MEDIA_VISUAL_USER_SELECTED" }),
         @Permission(alias = "storage", strings = { Manifest.permission.READ_EXTERNAL_STORAGE })
     }
 )
 public class PhotoManagerPlugin extends Plugin {
 
-    private String alias() {
-        return Build.VERSION.SDK_INT >= 33 ? "images" : "storage";
+    /* ---------- permission helpers ---------- */
+    private boolean isGranted(String p) {
+        return ContextCompat.checkSelfPermission(getContext(), p) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /** เข้าถึงรูปทั้งหมด (Android 13+: READ_MEDIA_IMAGES, ต่ำกว่า: READ_EXTERNAL_STORAGE) */
+    private boolean hasFull() {
+        if (Build.VERSION.SDK_INT >= 33) return isGranted(Manifest.permission.READ_MEDIA_IMAGES);
+        return isGranted(Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    /** Android 14+: ผู้ใช้เลือก "เลือกรูปที่อนุญาต" */
+    private boolean hasPartial() {
+        return Build.VERSION.SDK_INT >= 34 && isGranted("android.permission.READ_MEDIA_VISUAL_USER_SELECTED");
+    }
+
+    private boolean hasAccess() {
+        return hasFull() || hasPartial();
+    }
+
+    private JSObject accessObj() {
+        JSObject o = new JSObject();
+        o.put("granted", hasAccess());
+        o.put("partial", !hasFull() && hasPartial());
+        o.put("sdk", Build.VERSION.SDK_INT);
+        return o;
     }
 
     /* ---------- permission ---------- */
     @PluginMethod
+    public void checkAccess(PluginCall call) {
+        call.resolve(accessObj());
+    }
+
+    @PluginMethod
+    public void getInfo(PluginCall call) {
+        JSObject o = accessObj();
+        o.put("model", Build.MANUFACTURER + " " + Build.MODEL);
+        o.put("pkg", getContext().getPackageName());
+        call.resolve(o);
+    }
+
+    @PluginMethod
     public void requestPermission(PluginCall call) {
-        if (getPermissionState(alias()) == PermissionState.GRANTED) {
-            JSObject o = new JSObject();
-            o.put("granted", true);
-            call.resolve(o);
+        if (hasAccess()) {
+            call.resolve(accessObj());
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 34) {
+            requestPermissionForAliases(new String[] { "images", "visual" }, call, "permCb");
+        } else if (Build.VERSION.SDK_INT >= 33) {
+            requestPermissionForAlias("images", call, "permCb");
         } else {
-            requestPermissionForAlias(alias(), call, "permCb");
+            requestPermissionForAlias("storage", call, "permCb");
         }
     }
 
     @PermissionCallback
     private void permCb(PluginCall call) {
-        JSObject o = new JSObject();
-        o.put("granted", getPermissionState(alias()) == PermissionState.GRANTED);
-        call.resolve(o);
+        call.resolve(accessObj());
     }
 
     /* ---------- system bar sizes (CSS px) for full-screen layout ---------- */
@@ -125,6 +167,10 @@ public class PhotoManagerPlugin extends Plugin {
         final int limit = call.getInt("limit", 3000);
         new Thread(() -> {
             try {
+                if (!hasAccess()) {
+                    call.reject("no_permission");
+                    return;
+                }
                 ContentResolver cr = getContext().getContentResolver();
                 Uri base = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 String[] proj = {
