@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#7c3aed">
+<title>ลบรูป By จ๊าบ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap">
+<style>
+@font-face{font-family:'MaliLocal';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/mali-thai-500-normal.woff2) format('woff2');unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:'MaliLocal';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/mali-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'MaliLocal';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/mali-thai-700-normal.woff2) format('woff2');unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+@font-face{font-family:'MaliLocal';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/mali-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{
+  --ink:#1e1b4b;--sub:#6b7280;--line:rgba(76,29,149,.1);
+  --keep:linear-gradient(135deg,#22c55e,#14b8a6);
+  --del:linear-gradient(135deg,#ff3d71,#ff8a3d);
+  --drv:linear-gradient(135deg,#3b82f6,#06b6d4);
+  --acc:linear-gradient(135deg,#7c3aed,#ec4899);
+  --glow:transparent;
+  --sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:"MaliLocal","Mali","Noto Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:500;color:var(--ink);background:#f4f1ff;-webkit-user-select:none;user-select:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+
+.kk{width:1em;height:1em;stroke-width:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.act .kk{width:42px;height:42px;animation:wig 3.2s ease-in-out infinite}
+.act.g .kk{animation-delay:-1s}.act.d .kk{animation-delay:-2s}
+@keyframes wig{0%,100%{transform:rotate(0) translateY(0)}20%{transform:rotate(-8deg) translateY(-2px)}40%{transform:rotate(7deg)}60%{transform:rotate(0) translateY(-3px)}}
+.act:active .kk{animation:none;transform:scale(1.15)}
+.bulk button .kk{width:30px;height:30px}
+.lbl{display:flex;align-items:center;justify-content:center;gap:6px}
+.lbl .kk{width:26px;height:26px}
+.hint{align-items:flex-start;gap:8px;padding:2px 14px 6px}
+.hp{flex:1;display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:16px;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);font-size:11px;line-height:1.25;font-weight:700;color:var(--ink);box-shadow:0 6px 14px -10px rgba(76,29,149,.6);animation:pop .5s both}
+.hp:nth-child(2){animation-delay:.08s}.hp:nth-child(3){animation-delay:.16s}
+.hi{flex:none;width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-style:normal}
+.hi .kk{width:26px;height:26px}
+.hi.k{background:var(--keep)}.hi.d{background:var(--del)}.hi.g{background:var(--drv)}
+
+/* background blobs */
+.bg{position:fixed;inset:0;overflow:hidden;z-index:0}
+.bg i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:float 14s ease-in-out infinite}
+.bg i:nth-child(1){width:60vmax;height:60vmax;left:-20vmax;top:-20vmax;background:#c4b5fd}
+.bg i:nth-child(2){width:50vmax;height:50vmax;right:-18vmax;top:20vh;background:#fbcfe8;animation-delay:-5s}
+.bg i:nth-child(3){width:55vmax;height:55vmax;left:10vw;bottom:-28vmax;background:#a5f3fc;animation-delay:-9s}
+@keyframes float{50%{transform:translate(6vmax,-4vmax) scale(1.12)}}
+.bg::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,var(--glow),transparent 60%);transition:background .25s}
+
+#app{position:fixed;inset:0;display:flex;flex-direction:column;z-index:1;max-width:560px;margin:auto}
+header{display:flex;align-items:center;gap:8px;padding:calc(var(--st) + 12px) 16px 8px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.5px;background:var(--acc);-webkit-background-clip:text;background-clip:text;color:transparent;flex:1}
+.logo small{font-size:10px;background:var(--drv);-webkit-background-clip:text;background-clip:text;color:transparent;margin-left:4px;font-weight:800}
+.chip{display:none;align-items:center;gap:5px;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:700;color:#fff;animation:pop .35s}
+.chip.show{display:flex}
+.chip.pend{background:var(--del)}
+.chip.upl{background:var(--drv)}
+.chip svg{font-size:14px}
+.chip.upl svg{animation:bob 1s infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+.ibtn{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.75);backdrop-filter:blur(10px);display:grid;place-items:center;font-size:20px;box-shadow:0 4px 14px -6px rgba(76,29,149,.35);transition:transform .15s}
+.ibtn:active{transform:scale(.88) rotate(20deg)}
+
+main{flex:1;position:relative;min-height:0}
+.view{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;transform:translateY(18px) scale(.985);pointer-events:none;transition:opacity .35s,transform .45s cubic-bezier(.2,.9,.3,1);overflow:hidden}
+.view.active{opacity:1;transform:none;pointer-events:auto}
+
+nav{position:relative;margin:6px 14px calc(var(--sb) + 12px);height:64px;border-radius:24px;background:rgba(255,255,255,.82);backdrop-filter:blur(16px);box-shadow:0 12px 30px -10px rgba(76,29,149,.4);display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
+nav .ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc(25% - 3px);border-radius:18px;background:var(--acc);transition:transform .45s cubic-bezier(.3,1.3,.4,1);z-index:0;box-shadow:0 6px 16px -4px rgba(236,72,153,.6)}
+nav button{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;font-weight:700;color:var(--sub);transition:color .3s}
+nav button svg{font-size:22px;transition:transform .35s cubic-bezier(.3,1.6,.4,1)}
+nav button.on{color:#fff}
+nav button.on svg{transform:translateY(-1px) scale(1.15)}
+nav .dot{position:absolute;top:8px;right:calc(50% - 20px);min-width:16px;height:16px;border-radius:9px;background:#ff3d71;color:#fff;font-size:10px;font-weight:800;display:none;place-items:center;padding:0 4px}
+nav .dot.show{display:grid}
+
+/* DECK */
+.stats{display:flex;align-items:center;gap:10px;padding:4px 20px 10px}
+.stats b{font-size:13px}
+.bar{flex:1;height:8px;border-radius:9px;background:rgba(124,58,237,.12);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:9px;background:var(--acc);transition:width .6s cubic-bezier(.2,.9,.3,1)}
+.stackwrap{flex:1;min-height:0;padding:0 18px;display:flex;justify-content:center}
+#stack{position:relative;width:100%;max-width:420px;height:100%}
+.card{position:absolute;inset:0;border-radius:30px;overflow:hidden;background:#fff;box-shadow:0 24px 50px -16px rgba(76,29,149,.45);touch-action:none;will-change:transform;transition:transform .4s cubic-bezier(.2,.9,.3,1),opacity .4s}
+.card.top{cursor:grab}
+.card.enter{animation:rise .45s cubic-bezier(.2,.9,.3,1)}
+@keyframes rise{from{transform:scale(.93) translateY(18px);opacity:.6}}
+.card img{width:100%;height:100%;object-fit:cover;pointer-events:none;background:#e9e5ff}
+.card .info{position:absolute;left:0;right:0;bottom:0;padding:70px 20px 18px;background:linear-gradient(transparent,rgba(20,10,50,.82));color:#fff;pointer-events:none}
+.card .info h3{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .info p{font-size:12px;opacity:.85;margin-top:2px}
+.badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--del)}
+.badge.b2{background:var(--drv)}.badge.b3{background:#111}
+.lbl{position:absolute;padding:6px 14px;border-radius:14px;font-weight:900;font-size:19px;color:#fff;border:3px solid #fff;opacity:0;pointer-events:none;white-space:nowrap}
+.lbl.k{top:26px;left:20px;background:var(--keep);transform:rotate(-12deg)}
+.lbl.d{top:26px;right:20px;background:var(--del);transform:rotate(12deg)}
+.lbl.g{top:26px;left:50%;margin-left:-70px;width:140px;text-align:center;background:var(--drv)}
+.actions{display:flex;justify-content:center;align-items:center;gap:16px;padding:16px 0 8px}
+.act{width:64px;height:64px;border-radius:50%;color:#fff;font-size:28px;display:grid;place-items:center;box-shadow:0 12px 24px -8px rgba(0,0,0,.35);transition:transform .2s cubic-bezier(.3,1.6,.4,1)}
+.act:active{transform:scale(.82)}
+.act.k{background:var(--keep)}.act.d{background:var(--del)}.act.g{background:var(--drv)}
+.act.u{width:44px;height:44px;font-size:20px;background:#fff;color:#7c3aed}
+.hint{display:flex;justify-content:center;gap:14px;font-size:11px;font-weight:700;color:var(--sub);padding-bottom:4px}
+.empty{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:30px}
+.empty.show{display:flex;animation:rise .5s}
+.empty .big{font-size:64px;animation:bob 2s infinite}
+.empty h2{font-size:22px}
+.empty p{color:var(--sub);font-size:14px}
+.btn{padding:12px 22px;border-radius:16px;color:#fff;font-weight:800;font-size:14px;background:var(--acc);box-shadow:0 10px 20px -8px rgba(236,72,153,.7);transition:transform .15s}
+.btn:active{transform:scale(.94)}
+.btn.line{background:#fff;color:#7c3aed;box-shadow:0 6px 14px -8px rgba(76,29,149,.5)}
+.btn.red{background:var(--del)}.btn.blue{background:var(--drv)}.btn.green{background:var(--keep)}
+.btn.sm{padding:8px 14px;font-size:12px;border-radius:12px}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;border-radius:3px;z-index:99;animation:fall 2.2s ease-in forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+/* GRID */
+.vhead{padding:4px 18px 10px;display:flex;align-items:center;gap:10px}
+.vhead h2{font-size:20px;font-weight:900;flex:1}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 18px 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.fc{flex:none;padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.75);font-size:12.5px;font-weight:800;color:var(--sub);transition:all .25s}
+.fc.on{background:var(--acc);color:#fff;box-shadow:0 6px 14px -6px rgba(236,72,153,.7);transform:translateY(-1px)}
+.scroll{flex:1;overflow-y:auto;padding:0 14px 90px;-webkit-overflow-scrolling:touch}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+@media(min-width:480px){.grid{grid-template-columns:repeat(4,1fr)}}
+.tile{position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;background:#e9e5ff;content-visibility:auto;contain-intrinsic-size:110px;transition:transform .25s cubic-bezier(.3,1.5,.4,1),box-shadow .25s;animation:pop .35s both}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform .3s,filter .3s;pointer-events:none}
+.tile .chk{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.2);display:grid;place-items:center;color:#fff;font-size:14px;transition:all .25s cubic-bezier(.3,1.6,.4,1)}
+.tile .chk svg{transform:scale(0);transition:transform .25s cubic-bezier(.3,1.8,.4,1)}
+.tile.sel{transform:scale(.88)}
+.tile.sel img{filter:brightness(.75) saturate(1.2)}
+.tile.sel .chk{background:var(--acc);border-color:#fff}
+.tile.sel .chk svg{transform:scale(1)}
+.tile .tag{position:absolute;left:5px;bottom:5px;font-size:10px;font-weight:800;color:#fff;padding:2px 7px;border-radius:99px;background:var(--del)}
+.tile .tag.kp{background:var(--keep)}
+.tile .tag.bl{background:#f59e0b}
+.tile .tag.br{background:#111}
+.bulk{position:absolute;left:12px;right:12px;bottom:8px;padding:10px 12px;border-radius:22px;background:rgba(30,27,75,.94);backdrop-filter:blur(14px);color:#fff;display:flex;align-items:center;gap:8px;transform:translateY(130%);transition:transform .45s cubic-bezier(.3,1.3,.4,1);z-index:5;box-shadow:0 16px 30px -10px rgba(0,0,0,.5)}
+.bulk.show{transform:none}
+.bulk b{flex:1;font-size:13px}
+.bulk button{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:20px;color:#fff;transition:transform .15s}
+.bulk button:active{transform:scale(.85)}
+.bulk .bk{background:var(--keep)}.bulk .bd{background:var(--del)}.bulk .bg2{background:var(--drv)}.bulk .ba{background:rgba(255,255,255,.18)}
+.none{text-align:center;color:var(--sub);padding:60px 20px;font-weight:700}
+
+/* SCAN */
+.hero{margin:6px 18px 14px;padding:22px;border-radius:28px;background:var(--acc);color:#fff;text-align:center;position:relative;overflow:hidden;box-shadow:0 20px 40px -16px rgba(236,72,153,.7)}
+.hero::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.18);right:-60px;top:-70px;animation:float 8s infinite}
+.hero h2{font-size:20px;position:relative}
+.hero p{font-size:12.5px;opacity:.9;margin:4px 0 14px;position:relative}
+.hero .btn{background:#fff;color:#7c3aed;position:relative}
+.prog{height:8px;border-radius:9px;background:rgba(255,255,255,.3);margin-top:14px;overflow:hidden;display:none;position:relative}
+.prog i{display:block;height:100%;width:0;background:#fff;border-radius:9px;transition:width .2s}
+.opts{margin:0 18px 12px;padding:14px;border-radius:20px;background:rgba(255,255,255,.75);display:grid;gap:10px;font-size:12.5px;font-weight:700}
+.opts label{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.opts input[type=range]{flex:1;accent-color:#7c3aed}
+.opts select,.field{padding:8px 10px;border-radius:12px;border:2px solid rgba(124,58,237,.2);background:#fff;font:inherit;font-size:13px;color:var(--ink);user-select:text;-webkit-user-select:text}
+.res{margin:0 18px 10px;padding:16px;border-radius:24px;background:#fff;display:flex;align-items:center;gap:14px;box-shadow:0 10px 24px -14px rgba(76,29,149,.5);animation:rise .5s both}
+.res .ic{width:52px;height:52px;border-radius:18px;color:#fff;display:grid;place-items:center;font-size:26px;flex:none}
+.res .tx{flex:1;min-width:0}
+.res h4{font-size:15px}
+.res p{font-size:12px;color:var(--sub)}
+.res .n{font-size:26px;font-weight:900}
+.res .go{display:flex;flex-direction:column;gap:6px}
+
+/* BIN */
+.seg{display:flex;margin:0 18px 10px;padding:4px;border-radius:16px;background:rgba(255,255,255,.7);position:relative}
+.seg button{flex:1;padding:9px;font-weight:800;font-size:13px;color:var(--sub);position:relative;z-index:1;transition:color .3s}
+.seg button.on{color:#fff}
+.seg .sl{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:12px;background:var(--acc);transition:transform .4s cubic-bezier(.3,1.3,.4,1)}
+.binhead{display:flex;gap:8px;margin:0 18px 10px}
+.binhead .btn{flex:1}
+.bgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.bi{border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 10px 22px -14px rgba(76,29,149,.5);animation:pop .4s both}
+.bi .im{aspect-ratio:1;background:#e9e5ff;position:relative}
+.bi img{width:100%;height:100%;object-fit:cover}
+.bi .im span{position:absolute;left:8px;top:8px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;color:#fff;background:var(--del)}
+.bi .im span.dr{background:var(--drv)}
+.bi .nm{padding:8px 10px 2px;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bi .sm2{padding:0 10px;font-size:11px;color:var(--sub)}
+.bi .row{display:flex;gap:6px;padding:8px 10px 10px}
+.bi .row button{flex:1;padding:7px 0;border-radius:11px;font-size:12px;font-weight:800;color:#fff;background:var(--keep);transition:transform .15s}
+.bi .row button:active{transform:scale(.9)}
+.bi .row button.x{background:var(--del);flex:0 0 40px}
+
+/* SHEET / MODAL / TOAST */
+.back{position:fixed;inset:0;background:rgba(30,27,75,.45);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:50}
+.back.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:auto;max-height:88vh;overflow-y:auto;background:#fff;border-radius:30px 30px 0 0;padding:20px 20px calc(var(--sb) + 22px);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.9,.3,1);z-index:51}
+.sheet.show{transform:none}
+.sheet h3{font-size:19px;font-weight:900;margin-bottom:4px}
+.sheet .sub{font-size:12.5px;color:var(--sub);margin-bottom:14px;line-height:1.5}
+.sheet .f{display:grid;gap:6px;margin-bottom:12px;font-size:12px;font-weight:800}
+.sheet .field{width:100%}
+.stat{padding:10px 14px;border-radius:14px;font-size:13px;font-weight:800;margin-bottom:12px;background:#f3f0ff}
+.stat.ok{background:#dcfce7;color:#15803d}
+.code{text-align:center;padding:14px;border-radius:18px;background:#f3f0ff;margin-bottom:12px}
+.code b{display:block;font-size:30px;letter-spacing:4px;margin:4px 0;user-select:text;-webkit-user-select:text}
+.modal{position:fixed;left:24px;right:24px;top:50%;max-width:380px;margin:auto;padding:24px;border-radius:28px;background:#fff;text-align:center;z-index:60;transform:translateY(-50%) scale(.8);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.3,1.4,.4,1)}
+.modal.show{transform:translateY(-50%);opacity:1;pointer-events:auto}
+.modal .em{font-size:44px}
+.modal h3{margin:6px 0 4px}
+.modal p{font-size:13px;color:var(--sub);margin-bottom:16px;line-height:1.5}
+.modal .row{display:flex;gap:10px}
+.modal .row .btn{flex:1}
+#toasts{position:fixed;left:0;right:0;top:calc(var(--st) + 62px);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:70;pointer-events:none}
+.toast{padding:10px 18px;border-radius:99px;background:rgba(30,27,75,.94);color:#fff;font-size:13px;font-weight:700;max-width:90%;animation:tin .4s cubic-bezier(.3,1.5,.4,1),tout .35s 2.6s forwards}
+.toast.err{background:#e11d48}
+@keyframes tin{from{transform:translateY(-30px) scale(.8);opacity:0}}
+@keyframes tout{to{transform:translateY(-20px);opacity:0}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute;width:0;height:0" aria-hidden="true"><defs>
+<symbol id="kk-heart" viewBox="0 0 48 48">
+<path d="M24 42C10 32 5 24 5 17.5 5 11.5 9.5 7 15.5 7c3.6 0 6.8 1.9 8.5 5 1.7-3.1 4.9-5 8.5-5C38.5 7 43 11.5 43 17.5 43 24 38 32 24 42z" fill="#fff" stroke="none"/>
+<circle cx="17.5" cy="20.5" r="2" fill="#be185d" stroke="none"/><circle cx="30.5" cy="20.5" r="2" fill="#be185d" stroke="none"/>
+<ellipse cx="13" cy="25.5" rx="3" ry="1.9" fill="#fda4af" stroke="none"/><ellipse cx="35" cy="25.5" rx="3" ry="1.9" fill="#fda4af" stroke="none"/>
+<path d="M21.5 25.5q2.5 3.2 5 0" fill="none" stroke="#be185d" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M38 4v5M35.500 6.500h5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+<symbol id="kk-cloud" viewBox="0 0 48 48">
+<path d="M14 38c-5.500 0-10-4-10-9.200 0-4.400 3.200-8 7.700-9C13 13.600 18 9 24.200 9c6 0 10.800 4 12 9.500C41.700 19 45 22.800 45 27.600 45 33.500 40.500 38 35 38z" fill="#fff" stroke="none"/>
+<circle cx="18" cy="26" r="2" fill="#1d4ed8" stroke="none"/><circle cx="30" cy="26" r="2" fill="#1d4ed8" stroke="none"/>
+<ellipse cx="13.500" cy="30.500" rx="3" ry="1.900" fill="#93c5fd" stroke="none"/><ellipse cx="34.500" cy="30.500" rx="3" ry="1.900" fill="#93c5fd" stroke="none"/>
+<path d="M21.500 29.500q2.500 3.200 5 0" fill="none" stroke="#1d4ed8" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M24 41v5M21.500 43.500 24 46l2.500-2.500" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M40 5v5M37.500 7.500h5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+<symbol id="kk-bin" viewBox="0 0 48 48">
+<rect x="19" y="4" width="10" height="6" rx="3" fill="#fff" stroke="none"/>
+<rect x="8" y="9" width="32" height="6" rx="3" fill="#fff" stroke="none"/>
+<path d="M12 18h24l-1.800 22.200a3 3 0 0 1-3 2.800H16.800a3 3 0 0 1-3-2.800z" fill="#fff" stroke="none"/>
+<circle cx="19.500" cy="28" r="2" fill="#e11d48" stroke="none"/><circle cx="28.500" cy="28" r="2" fill="#e11d48" stroke="none"/>
+<ellipse cx="15.500" cy="33" rx="2.600" ry="1.700" fill="#fda4af" stroke="none"/><ellipse cx="32.500" cy="33" rx="2.600" ry="1.700" fill="#fda4af" stroke="none"/>
+<path d="M22 32.500q2 2.600 4 0" fill="none" stroke="#e11d48" stroke-width="1.8" stroke-linecap="round"/>
+</symbol>
+</defs></svg>
+<div class="bg"><i></i><i></i><i></i></div>
+<div id="app">
+  <header>
+    <div class="logo">ลบรูป<small>By จ๊าบ</small><small id="mode"></small></div>
+    <button class="chip upl" id="chipUpl"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg><span></span></button>
+    <button class="chip pend" id="chipPend"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span></span></button>
+    <button class="ibtn" id="btnSet" aria-label="ตั้งค่า"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </header>
+
+  <main>
+    <!-- DECK -->
+    <section class="view active" id="v-deck">
+      <div class="stats"><b id="leftTxt">0 รูป</b><div class="bar"><i id="barFill"></i></div></div>
+      <div class="stackwrap"><div id="stack"></div>
+        <div class="empty" id="empty"><div class="big">🎉</div><h2 id="emptyT">เก็บกวาดครบแล้ว!</h2><p id="emptyP">ไม่มีรูปที่ต้องตัดสินใจแล้ว</p><button class="btn" id="emptyBtn">สแกนหารูปซ้ำ/เบลอ</button></div>
+      </div>
+      <div class="actions">
+        <button class="act u" id="bUndo" aria-label="ย้อนกลับ"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+        <button class="act k" id="bKeep" aria-label="เก็บไว้"><svg class="kk"><use href="#kk-heart"/></svg></button>
+        <button class="act g" id="bDrive" aria-label="ย้ายไป Drive"><svg class="kk"><use href="#kk-cloud"/></svg></button>
+        <button class="act d" id="bDel" aria-label="ลบ"><svg class="kk"><use href="#kk-bin"/></svg></button>
+      </div>
+      <div class="hint"><span class="hp"><i class="hi k"><svg class="kk"><use href="#kk-heart"/></svg></i>ปัดซ้าย<br>เก็บไว้</span><span class="hp"><i class="hi g"><svg class="kk"><use href="#kk-cloud"/></svg></i>ปัดลง<br>ไป Drive</span><span class="hp"><i class="hi d"><svg class="kk"><use href="#kk-bin"/></svg></i>ปัดขวา<br>ลบ</span></div>
+    </section>
+
+    <!-- GRID -->
+    <section class="view" id="v-grid">
+      <div class="vhead"><h2>เลือกหลายรูป</h2><button class="btn sm line" id="gAll">เลือกทั้งหมด</button></div>
+      <div class="chips" id="chips"></div>
+      <div class="scroll" id="gScroll"><div class="grid" id="grid"></div></div>
+      <div class="bulk" id="bulk">
+        <b id="bulkN">0</b>
+        <button class="ba" id="xClear" aria-label="ยกเลิก"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <button class="bk" id="xKeep" aria-label="เก็บ"><svg class="kk"><use href="#kk-heart"/></svg></button>
+        <button class="bg2" id="xDrive" aria-label="Drive"><svg class="kk"><use href="#kk-cloud"/></svg></button>
+        <button class="bd" id="xDel" aria-label="ลบ"><svg class="kk"><use href="#kk-bin"/></svg></button>
+      </div>
+    </section>
+
+    <!-- SCAN -->
+    <section class="view" id="v-scan">
+      <div class="scroll" style="padding-top:6px">
+        <div class="hero"><h2>สแกนรูปอัจฉริยะ</h2><p>หารูปซ้ำ · รูปไม่ชัด · รูปเสีย</p>
+          <button class="btn" id="scanBtn">เริ่มสแกน</button>
+          <div class="prog" id="prog"><i></i></div></div>
+        <div class="opts" style="margin:0 0 12px">
+          <label>สแกนรูปล่าสุด <select id="optLimit"><option value="200">200</option><option value="500">500</option><option value="1000">1000</option><option value="3000">ทั้งหมด</option></select></label>
+          <label>ความไว (เบลอ) <input type="range" id="optBlur" min="15" max="300" step="5"><b id="blurV"></b></label>
+        </div>
+        <div id="scanRes"></div>
+      </div>
+    </section>
+
+    <!-- BIN -->
+    <section class="view" id="v-bin">
+      <div class="vhead"><h2>รูปที่ลบ</h2></div>
+      <div class="seg"><div class="sl" id="segSl"></div><button class="on" data-t="device">ในเครื่อง</button><button data-t="drive">Google Drive</button></div>
+      <div class="binhead"><button class="btn sm green" id="restAll">กู้คืนทั้งหมด</button><button class="btn sm red" id="purgeAll">ลบถาวรทั้งหมด</button></div>
+      <div class="scroll"><div class="bgrid" id="bgrid"></div></div>
+    </section>
+  </main>
+
+  <nav>
+    <div class="ind" id="ind"></div>
+    <button class="on" data-v="deck"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 21h6"/></svg>ปัดรูป</button>
+    <button data-v="grid"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>เลือก</button>
+    <button data-v="scan"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>สแกน</button>
+    <button data-v="bin"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>ที่ลบ<span class="dot" id="binDot"></span></button>
+  </nav>
+</div>
+
+<div class="back" id="back"></div>
+<div class="sheet" id="sheet">
+  <h3>ตั้งค่า</h3>
+  <div class="sub">เชื่อม Google Drive เพื่อใช้ปัดลง (ย้ายไป Drive แล้วลบในมือถือ)</div>
+  <div class="stat" id="drvStat"></div>
+  <div id="drvForm">
+    <div class="f">Client ID (ประเภท TV and Limited Input)<input class="field" id="cid" placeholder="xxxx.apps.googleusercontent.com" autocapitalize="off" autocomplete="off"></div>
+    <div class="f">Client Secret<input class="field" id="csec" placeholder="GOCSPX-..." autocapitalize="off" autocomplete="off"></div>
+  </div>
+  <div class="code" id="codeBox" style="display:none">เปิด <a id="vurl" target="_blank" style="color:#7c3aed;font-weight:800"></a> แล้วใส่รหัส<b id="ucode"></b><small id="codeSt" style="color:#6b7280">กำลังรอการยืนยัน…</small></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn blue" id="drvConn">เชื่อม Google Drive</button>
+    <button class="btn line" id="drvOut" style="display:none">ตัดการเชื่อมต่อ</button>
+    <button class="btn line" id="resetAll">รีเซ็ตข้อมูลในแอป</button>
+  </div>
+  <div class="sub" style="margin-top:14px">รูปที่ย้ายจะอยู่ในโฟลเดอร์ “รูปจากมือถือ” บน Drive ของคุณ (สิทธิ์ drive.file เห็นเฉพาะไฟล์ที่แอปสร้าง)</div>
+</div>
+<div class="modal" id="modal"><div class="em" id="mEm">🗑️</div><h3 id="mT"></h3><p id="mP"></p><div class="row"><button class="btn line" id="mNo">ยกเลิก</button><button class="btn red" id="mYes">ตกลง</button></div></div>
+<div id="toasts"></div>
+
+<script>
+/* ============ helpers ============ */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('พื้นที่เก็บข้อมูลเต็ม','err')}}};
+const vib=n=>{try{navigator.vibrate&&navigator.vibrate(n)}catch{}};
+const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+const fmtDate=t=>new Date(t).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const IC={
+  heart:'<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-9A5.3 5.3 0 0 1 12 6a5.3 5.3 0 0 1 9.3 6c-2.3 4.6-9.3 9-9.3 9z"/></svg>',
+  check:'<svg viewBox="0 0 24 24" style="stroke-width:3"><path d="M5 12l5 5L20 7"/></svg>',
+  dup:'<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+  blur:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg>',
+  broken:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 15l5-4 4 3 3-2 6 5M15 8h.01"/><path d="M13 3l-2 5 3 3-2 5"/></svg>'
+};
+
+function toast(t,type){const d=document.createElement('div');d.className='toast'+(type==='err'?' err':'');d.textContent=t;$('#toasts').appendChild(d);setTimeout(()=>d.remove(),3100)}
+function confirmBox({em='🗑️',title,text,ok='ตกลง',cls='red'}){return new Promise(res=>{
+  $('#mEm').textContent=em;$('#mT').textContent=title;$('#mP').textContent=text;const y=$('#mYes');y.textContent=ok;y.className='btn '+cls;
+  $('#back').classList.add('show');$('#modal').classList.add('show');
+  const done=v=>{$('#modal').classList.remove('show');if(!$('#sheet').classList.contains('show'))$('#back').classList.remove('show');y.onclick=n.onclick=null;res(v)};
+  const n=$('#mNo');y.onclick=()=>done(true);n.onclick=()=>done(false)})}
+function confetti(){const cols=['#7c3aed','#ec4899','#22c55e','#3b82f6','#f59e0b','#ff3d71'];for(let i=0;i<46;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=cols[i%6];c.style.animationDelay=Math.random()*.6+'s';c.style.animationDuration=1.8+Math.random()*1.4+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),3500)}}
+
+/* ============ native bridge / mock ============ */
+const native=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+const PM=native?Capacitor.registerPlugin('PhotoManager'):null;
+let photos=[];
+
+function rng(seed){return()=>{seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296}}
+function scene(seed,blurry){
+  const W=480,H=640,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),r=rng(seed*977+13),h=r()*360;
+  const g=x.createLinearGradient(0,0,W*r(),H);g.addColorStop(0,`hsl(${h},85%,62%)`);g.addColorStop(1,`hsl(${(h+60+r()*80)%360},85%,55%)`);x.fillStyle=g;x.fillRect(0,0,W,H);
+  for(let i=0;i<14;i++){x.globalAlpha=.55+r()*.4;x.fillStyle=`hsl(${(h+r()*200)%360},90%,${45+r()*35}%)`;if(r()<.5){x.beginPath();x.arc(r()*W,r()*H,20+r()*90,0,7);x.fill()}else x.fillRect(r()*W,r()*H,30+r()*140,30+r()*140)}
+  x.globalAlpha=1;x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=1.4;
+  for(let i=0;i<120;i++){x.beginPath();const a=r()*W,b=r()*H;x.moveTo(a,b);x.lineTo(a+r()*40-20,b+r()*40-20);x.stroke()}
+  if(blurry){const t=document.createElement('canvas');t.width=W/14;t.height=H/14;t.getContext('2d').drawImage(c,0,0,t.width,t.height);x.clearRect(0,0,W,H);x.imageSmoothingEnabled=true;x.drawImage(t,0,0,W,H)}
+  return c.toDataURL('image/jpeg',.82)
+}
+function mockPhotos(){
+  const out=[],now=Date.now(),blurIdx=[5,12,19,24],dupOf={28:2,29:2,30:8,31:15},brokenIdx=[32,33];
+  for(let i=0;i<34;i++){
+    let src,size,w=480,h=640;
+    if(brokenIdx.includes(i)){src='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgMCAgMDAwME'+'x'.repeat(40);size=0;w=0;h=0}
+    else{const seed=dupOf[i]!==undefined?dupOf[i]:i;src=scene(seed+1,blurIdx.includes(i));size=Math.round(src.length*.75)}
+    out.push({id:'m'+i,name:'IMG_'+(2000+i)+(dupOf[i]!==undefined?' (1)':'')+'.jpg',size,date:now-i*3.7*864e5,w,h,mime:'image/jpeg',src,uri:src})
+  }
+  return out.reverse().map((p,i)=>(p.date=now-i*3.7*864e5,p))
+}
+async function loadPhotos(){
+  if(native){
+    let perm;try{perm=await PM.requestPermission()}catch(e){perm={granted:false}}
+    if(!perm.granted){showEmpty('🔒','ต้องการสิทธิ์เข้าถึงรูป','กดปุ่มเพื่ออนุญาตการเข้าถึงรูปภาพ','ขออนุญาต',()=>init());return false}
+    const r=await PM.getPhotos({limit:3000});
+    photos=r.photos.map(x=>({...x,src:Capacitor.convertFileSrc(x.uri)}));
+  }else photos=mockPhotos();
+  return true
+}
+async function deviceDelete(ids){
+  if(!ids.length)return true;
+  if(native){try{const r=await PM.deletePhotos({ids});if(r.deleted){const s=new Set(ids);photos=photos.filter(p=>!s.has(p.id))}return !!r.deleted}catch(e){toast('ลบไม่สำเร็จ: '+(e.message||e),'err');return false}}
+  const ok=confirm('[โหมดทดสอบ] ระบบจะถามยืนยันแบบนี้บน Android\nลบ '+ids.length+' รูปออกจากเครื่อง?');
+  if(ok){const s=new Set(ids);photos=photos.filter(p=>!s.has(p.id))}return ok
+}
+
+/* ============ state ============ */
+const kept=new Set(store.get('sc_kept',[]));
+let bin=store.get('sc_bin',[]);       // รูปที่ลบ (ยังอยู่ในเครื่อง)
+let drive=store.get('sc_drive',[]);   // รูปที่ย้ายไป Drive
+let pending=store.get('sc_pending',[]); // ย้ายไป Drive แล้ว รอลบออกจากเครื่อง
+const uploading=new Set();
+let history=[];
+const settings=Object.assign({limit:500,blur:80},store.get('sc_settings',{}));
+const saveAll=()=>{store.set('sc_kept',[...kept]);store.set('sc_bin',bin);store.set('sc_drive',drive);store.set('sc_pending',pending)};
+const meta=p=>({id:p.id,name:p.name,size:p.size,date:p.date,w:p.w,h:p.h,mime:p.mime||'image/jpeg'});
+function hiddenSet(){const s=new Set(bin.map(b=>b.id));drive.forEach(d=>s.add(d.id));uploading.forEach(i=>s.add(i));return s}
+const vis=()=>{const H=hiddenSet();return photos.filter(p=>!H.has(p.id))};
+const byId=id=>photos.find(p=>p.id===id);
+
+/* ============ Google Drive ============ */
+const Drive=(()=>{
+  let cfg=store.get('sc_drvcfg',{});let folderId=cfg.folderId||null;
+  const save=()=>store.set('sc_drvcfg',{...cfg,folderId});
+  const form=async(url,o)=>(await fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(o).toString()})).json();
+  const api={
+    ready:()=>!native||!!cfg.refresh,
+    cfg:()=>cfg,
+    setClient(id,sec){cfg.clientId=id;cfg.clientSecret=sec;save()},
+    async connect(onCode,cancelRef){
+      if(!cfg.clientId||!cfg.clientSecret)throw new Error('ใส่ Client ID และ Secret ก่อน');
+      const d=await form('https://oauth2.googleapis.com/device/code',{client_id:cfg.clientId,scope:'https://www.googleapis.com/auth/drive.file'});
+      if(!d.device_code)throw new Error(d.error_description||d.error||'ขอรหัสไม่สำเร็จ');
+      onCode(d);const end=Date.now()+d.expires_in*1000;let iv=(d.interval||5)*1000;
+      while(Date.now()<end&&!cancelRef.stop){
+        await sleep(iv);
+        const t=await form('https://oauth2.googleapis.com/token',{client_id:cfg.clientId,client_secret:cfg.clientSecret,device_code:d.device_code,grant_type:'urn:ietf:params:oauth:grant-type:device_code'});
+        if(t.access_token){cfg.access=t.access_token;cfg.exp=Date.now()+t.expires_in*1000;cfg.refresh=t.refresh_token;save();return true}
+        if(t.error==='slow_down')iv+=5000;
+        else if(t.error&&t.error!=='authorization_pending')throw new Error(t.error_description||t.error)
+      }
+      throw new Error('หมดเวลา/ยกเลิก')
+    },
+    logout(){cfg={clientId:cfg.clientId,clientSecret:cfg.clientSecret};folderId=null;save()},
+    async token(){
+      if(cfg.access&&cfg.exp>Date.now()+60000)return cfg.access;
+      const t=await form('https://oauth2.googleapis.com/token',{client_id:cfg.clientId,client_secret:cfg.clientSecret,refresh_token:cfg.refresh,grant_type:'refresh_token'});
+      if(!t.access_token)throw new Error('ต่อ Drive ใหม่อีกครั้ง ('+(t.error||'token')+')');
+      cfg.access=t.access_token;cfg.exp=Date.now()+t.expires_in*1000;save();return cfg.access
+    },
+    async folder(){
+      if(folderId)return folderId;const tk=await api.token(),H={Authorization:'Bearer '+tk};
+      const q=encodeURIComponent("name='รูปจากมือถือ' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+      const r=await(await fetch('https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id)',{headers:H})).json();
+      if(r.files&&r.files[0])folderId=r.files[0].id;
+      else{const c=await(await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify({name:'รูปจากมือถือ',mimeType:'application/vnd.google-apps.folder'})})).json();if(!c.id)throw new Error('สร้างโฟลเดอร์ไม่สำเร็จ');folderId=c.id}
+      save();return folderId
+    },
+    async upload(p){
+      if(!native){await sleep(700+Math.random()*600);return 'mock_'+p.id}
+      const token=await api.token(),folder=await api.folder();
+      const r=await PM.uploadToDrive({uri:p.uri,name:p.name,mime:p.mime||'image/jpeg',token,folderId:folder});return r.id
+    },
+    async remove(driveId){
+      if(!native||String(driveId).startsWith('mock_'))return;
+      const tk=await api.token();const r=await fetch('https://www.googleapis.com/drive/v3/files/'+driveId,{method:'DELETE',headers:{Authorization:'Bearer '+tk}});
+      if(!r.ok&&r.status!==404)throw new Error('ลบบน Drive ไม่สำเร็จ ('+r.status+')')
+    },
+    async download(d){
+      if(!native){const np={id:'r'+Date.now()+Math.random().toString(36).slice(2,6),name:d.name,size:d.size,date:d.date,w:d.w,h:d.h,mime:d.mime,src:d.thumb,uri:d.thumb};photos.unshift(np);return np}
+      const token=await api.token();const r=await PM.downloadFromDrive({fileId:d.driveId,name:d.name,mime:d.mime||'image/jpeg',token});
+      const np={id:r.id,name:d.name,size:d.size,date:d.date,w:d.w,h:d.h,mime:d.mime,uri:r.uri,src:Capacitor.convertFileSrc(r.uri)};photos.unshift(np);return np
+    }
+  };return api
+})();
+
+function makeThumb(src){return new Promise(res=>{const im=new Image();im.onload=()=>{try{const s=140/Math.max(im.naturalWidth,im.naturalHeight,1),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*s));c.height=Math.max(1,Math.round(im.naturalHeight*s));c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.6))}catch{res('')}};im.onerror=()=>res('');im.src=src})}
+
+/* ============ actions ============ */
+let uploadChain=Promise.resolve();
+function queueUpload(p){
+  uploading.add(p.id);chips();
+  uploadChain=uploadChain.then(async()=>{
+    try{
+      const thumb=await makeThumb(p.src),driveId=await Drive.upload(p);
+      drive.unshift({...meta(p),driveId,thumb});pending.push(p.id);uploading.delete(p.id);saveAll();chips();
+      toast('☁️ ย้ายไป Drive แล้ว: '+p.name);
+      if(pending.length>=8)flushPending()
+    }catch(e){uploading.delete(p.id);chips();toast('อัปโหลดไม่สำเร็จ: '+(e.message||e),'err');refresh()}
+  })
+}
+async function flushPending(){
+  const ids=pending.filter(id=>byId(id));
+  if(!ids.length){pending=[];saveAll();chips();return}
+  const ok=await deviceDelete(ids);
+  if(ok){pending=[];saveAll();toast('🗑️ ลบ '+ids.length+' รูปออกจากเครื่องแล้ว');confetti()}
+  chips();refresh()
+}
+function act(p,type){
+  if(type==='keep')kept.add(p.id);
+  else if(type==='bin'){bin.unshift(meta(p));kept.delete(p.id)}
+  else if(type==='drive'){kept.delete(p.id);queueUpload(p)}
+  history.push({id:p.id,type});if(history.length>50)history.shift();
+  saveAll();refresh()
+}
+function undo(){
+  const h=history.pop();if(!h){toast('ไม่มีอะไรให้ย้อน');return}
+  if(h.type==='keep')kept.delete(h.id);
+  else if(h.type==='bin')bin=bin.filter(b=>b.id!==h.id);
+  else if(h.type==='drive'){
+    if(uploading.has(h.id)){history.push(h);toast('กำลังอัปโหลดอยู่ ย้อนไม่ได้','err');return}
+    const d=drive.find(x=>x.id===h.id);
+    if(d&&pending.includes(h.id)&&byId(h.id)){drive=drive.filter(x=>x!==d);pending=pending.filter(i=>i!==h.id);Drive.remove(d.driveId).catch(()=>{})}
+    else{history.push(h);toast('รูปถูกลบจากเครื่องแล้ว ไปกู้คืนที่แท็บ “ที่ลบ”','err');return}
+  }
+  vib(15);saveAll();refresh()
+}
+
+/* ============ views ============ */
+const VIEWS=['deck','grid','scan','bin'];let cur='deck';
+function setView(v){cur=v;
+  $$('.view').forEach(e=>e.classList.toggle('active',e.id==='v-'+v));
+  $$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  $('#ind').style.transform=`translateX(${VIEWS.indexOf(v)*100}%)`;
+  if(v!=='deck')setGlow(null);refresh()}
+function refresh(){chips();
+  ({deck:renderDeck,grid:renderGrid,scan:renderScan,bin:renderBin})[cur]();
+}
+function chips(){
+  const u=$('#chipUpl'),p=$('#chipPend');
+  u.classList.toggle('show',uploading.size>0);u.lastElementChild.textContent=uploading.size;
+  const pc=pending.filter(id=>byId(id)).length;
+  p.classList.toggle('show',pc>0);p.lastElementChild.textContent='ลบ '+pc;
+  const n=bin.length+drive.length;const d=$('#binDot');d.textContent=n>99?'99+':n;d.classList.toggle('show',n>0)
+}
+function setGlow(t){const m={keep:'rgba(34,197,94,.35)',bin:'rgba(255,61,113,.35)',drive:'rgba(59,130,246,.38)'};document.documentElement.style.setProperty('--glow',m[t]||'transparent')}
+function showEmpty(em,t,p,btn,fn){$('#stack').innerHTML='';const e=$('#empty');e.querySelector('.big').textContent=em;$('#emptyT').textContent=t;$('#emptyP').textContent=p;$('#emptyBtn').textContent=btn;$('#emptyBtn').onclick=fn;e.classList.add('show')}
+
+/* ----- DECK ----- */
+let deckList=[],wasEmpty=false;
+function renderDeck(){
+  const all=vis(),list=all.filter(p=>!kept.has(p.id));deckList=list;
+  const decided=all.length-list.length+bin.length+drive.length;
+  $('#leftTxt').textContent='เหลือ '+list.length+' รูป';
+  $('#barFill').style.width=(decided+list.length?Math.round(decided/(decided+list.length)*100):0)+'%';
+  const stack=$('#stack');stack.innerHTML='';
+  if(!list.length){
+    if(!wasEmpty&&photos.length)confetti();wasEmpty=true;
+    showEmpty('🎉','เก็บกวาดครบแล้ว!','ไม่มีรูปที่ต้องตัดสินใจแล้ว','สแกนหารูปซ้ำ/เบลอ',()=>setView('scan'));return}
+  wasEmpty=false;$('#empty').classList.remove('show');
+  for(let i=Math.min(2,list.length-1);i>=0;i--){
+    const p=list[i],el=document.createElement('div');el.className='card'+(i===0?' top enter':'');
+    el.style.transform=`translateY(${i*16}px) scale(${1-i*.05})`;el.style.opacity=1-i*.18;
+    const fl=flags(p.id);
+    el.innerHTML=`<img src="${p.src}" alt="" draggable="false" decoding="async"><div class="lbl k"><svg class="kk"><use href="#kk-heart"/></svg>เก็บไว้</div><div class="lbl d"><svg class="kk"><use href="#kk-bin"/></svg>ลบ</div><div class="lbl g"><svg class="kk"><use href="#kk-cloud"/></svg>Drive</div>
+      <div class="info"><h3>${esc(p.name)}</h3><p>${fmtDate(p.date)} · ${fmtSize(p.size)}${p.w?' · '+p.w+'×'+p.h:''}</p>${fl.length?'<div class="badges">'+fl.map(f=>`<span class="badge ${f[1]}">${f[0]}</span>`).join('')+'</div>':''}</div>`;
+    stack.appendChild(el);
+    if(i===0)attachDrag(el,p)
+  }
+}
+function attachDrag(el,p){
+  let sx=0,sy=0,dx=0,dy=0,on=false;
+  const L={k:$('.k',el),d:$('.d',el),g:$('.g',el)};
+  const mv=()=>{el.style.transform=`translate(${dx}px,${dy}px) rotate(${dx/18}deg)`;const hz=Math.abs(dx)>=Math.abs(dy);
+    const kk=hz&&dx<0?Math.min(1,-dx/100):0,dd=hz&&dx>0?Math.min(1,dx/100):0,gg=!hz&&dy>0?Math.min(1,dy/100):0;
+    L.k.style.opacity=kk;L.d.style.opacity=dd;L.g.style.opacity=gg;
+    setGlow(kk>.15?'keep':dd>.15?'bin':gg>.15?'drive':null);
+    const nx=el.previousElementSibling;if(nx){const t=Math.min(1,Math.hypot(dx,dy)/160);nx.style.transition='none';nx.style.transform=`translateY(${16-16*t}px) scale(${.95+.05*t})`;nx.style.opacity=.82+.18*t}};
+  el.addEventListener('pointerdown',e=>{if(el.dataset.done)return;on=true;sx=e.clientX;sy=e.clientY;dx=dy=0;el.setPointerCapture(e.pointerId);el.style.transition='none'});
+  el.addEventListener('pointermove',e=>{if(!on)return;dx=e.clientX-sx;dy=Math.max(e.clientY-sy,-50);mv()});
+  const end=()=>{if(!on)return;on=false;const T=95,hz=Math.abs(dx)>=Math.abs(dy);
+    if(hz&&dx>T)fly(el,p,'bin',dx,dy);else if(hz&&dx<-T)fly(el,p,'keep',dx,dy);else if(!hz&&dy>T)fly(el,p,'drive',dx,dy);else snap(el)};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)
+}
+function snap(el){el.style.transition='transform .5s cubic-bezier(.3,1.6,.4,1)';el.style.transform='none';$$('.lbl',el).forEach(l=>l.style.opacity=0);setGlow(null);
+  const nx=el.previousElementSibling;if(nx){nx.style.transition='';nx.style.transform='translateY(16px) scale(.95)';nx.style.opacity=.82}}
+function fly(el,p,type,dx=0,dy=0){
+  if(el.dataset.done)return;
+  if(type==='drive'&&!Drive.ready()){toast('เชื่อม Google Drive ก่อน','err');snap(el);openSheet();return}
+  el.dataset.done=1;
+  const tx=type==='bin'?720:type==='keep'?-720:dx*1.2,ty=type==='drive'?980:dy;
+  const lb=$(type==='bin'?'.d':type==='keep'?'.k':'.g',el);lb.style.opacity=1;
+  el.style.transition='transform .4s cubic-bezier(.4,.1,.6,1),opacity .4s .05s';
+  el.style.transform=`translate(${tx}px,${ty}px) rotate(${tx/14}deg)`;el.style.opacity=0;
+  const nx=el.previousElementSibling;if(nx){nx.style.transition='transform .4s cubic-bezier(.2,.9,.3,1),opacity .4s';nx.style.transform='none';nx.style.opacity=1}
+  vib(type==='bin'?25:12);setGlow(null);
+  setTimeout(()=>act(p,type),300)
+}
+['keep','bin','drive'].forEach(t=>{const id={keep:'#bKeep',bin:'#bDel',drive:'#bDrive'}[t];
+  $(id).onclick=()=>{const el=$('#stack .card.top');if(el&&deckList[0]){const l=$('.'+({keep:'k',bin:'d',drive:'g'}[t]),el);l.style.opacity=1;fly(el,deckList[0],t)}}});
+$('#bUndo').onclick=undo;
+
+/* ----- SCAN ----- */
+let scan={done:false,res:{},groups:[],broken:new Set()},scanning=false;
+function flags(id){const f=[];if(scan.done){if(scan.broken.has(id))f.push(['รูปเสีย','b3']);else{const r=scan.res[id];if(r&&r.ok&&r.lap<settings.blur)f.push(['ไม่ชัด','b2']);if(dupGroupOf(id)>=0)f.push(['ซ้ำ',''])}}return f}
+function dupGroupOf(id){return scan.groups.findIndex(g=>g.includes(id))}
+function analyze(p){return new Promise(res=>{
+  const im=new Image();im.decoding='async';
+  im.onload=()=>{try{
+    if(!im.naturalWidth){res({ok:false});return}
+    const s=256/Math.max(im.naturalWidth,im.naturalHeight),w=Math.max(8,Math.round(im.naturalWidth*s)),h=Math.max(8,Math.round(im.naturalHeight*s));
+    const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,w,h);
+    const d=x.getImageData(0,0,w,h).data,g=new Float32Array(w*h);for(let i=0;i<w*h;i++)g[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];
+    let sum=0,sq=0,n=0;for(let y=1;y<h-1;y++)for(let xx=1;xx<w-1;xx++){const i=y*w+xx,l=4*g[i]-g[i-1]-g[i+1]-g[i-w]-g[i+w];sum+=l;sq+=l*l;n++}
+    const lap=sq/n-(sum/n)*(sum/n);
+    const c2=document.createElement('canvas');c2.width=9;c2.height=8;const x2=c2.getContext('2d',{willReadFrequently:true});x2.drawImage(im,0,0,9,8);
+    const d2=x2.getImageData(0,0,9,8).data;let hi=0,lo=0,b=0;
+    for(let y=0;y<8;y++)for(let xx=0;xx<8;xx++){const a=d2[(y*9+xx)*4]*.299+d2[(y*9+xx)*4+1]*.587+d2[(y*9+xx)*4+2]*.114,bb=d2[(y*9+xx+1)*4]*.299+d2[(y*9+xx+1)*4+1]*.587+d2[(y*9+xx+1)*4+2]*.114,bit=a>bb?1:0;if(b<32)hi=(hi<<1|bit)>>>0;else lo=(lo<<1|bit)>>>0;b++}
+    res({ok:true,lap,hi,lo})}catch(e){res({ok:false})}};
+  im.onerror=()=>res({ok:false});im.src=p.src})}
+const pop=n=>{n=n-((n>>>1)&0x55555555);n=(n&0x33333333)+((n>>>2)&0x33333333);return(((n+(n>>>4))&0x0F0F0F0F)*0x01010101)>>>24};
+function buildGroups(ids){
+  const par={};const f=a=>par[a]===a?a:(par[a]=f(par[a]));ids.forEach(i=>par[i]=i);
+  for(let a=0;a<ids.length;a++){const A=scan.res[ids[a]];for(let b=a+1;b<ids.length;b++){const B=scan.res[ids[b]];if(pop(A.hi^B.hi)+pop(A.lo^B.lo)<=6){const ra=f(ids[a]),rb=f(ids[b]);if(ra!==rb)par[ra]=rb}}}
+  const m={};ids.forEach(i=>{(m[f(i)]=m[f(i)]||[]).push(i)});return Object.values(m).filter(g=>g.length>1)
+}
+async function runScan(){
+  if(scanning)return;scanning=true;
+  const list=vis().slice(0,+settings.limit||500);scan={done:false,res:{},groups:[],broken:new Set()};
+  const pr=$('#prog'),bar=$('i',pr);pr.style.display='block';bar.style.width='0';$('#scanBtn').textContent='กำลังสแกน…';
+  let i=0,done=0;
+  const worker=async()=>{while(i<list.length){const p=list[i++];
+    const r=(p.size===0)?{ok:false}:await analyze(p);scan.res[p.id]=r;if(!r.ok)scan.broken.add(p.id);
+    done++;bar.style.width=Math.round(done/list.length*100)+'%';$('#scanBtn').textContent='สแกน '+done+'/'+list.length}};
+  await Promise.all([worker(),worker(),worker()]);
+  scan.groups=buildGroups(list.filter(p=>scan.res[p.id].ok).map(p=>p.id));
+  scan.done=true;scanning=false;pr.style.display='none';$('#scanBtn').textContent='สแกนอีกครั้ง';
+  vib([20,40,20]);renderScan()
+}
+function blurIds(){return Object.keys(scan.res).filter(id=>scan.res[id].ok&&scan.res[id].lap<settings.blur)}
+function dupExtra(){const s=[];scan.groups.forEach(g=>{const ps=g.map(byId).filter(Boolean).sort((a,b)=>(b.w*b.h-a.w*a.h)||(b.size-a.size));ps.slice(1).forEach(p=>s.push(p.id))});return s}
+function renderScan(){
+  $('#optLimit').value=String(settings.limit);$('#optBlur').value=settings.blur;$('#blurV').textContent=settings.blur;
+  const box=$('#scanRes');if(!scan.done){box.innerHTML='<div class="none">กดเริ่มสแกนเพื่อหารูปซ้ำ รูปไม่ชัด และรูปเสีย<br><small>ทำงานในเครื่อง ไม่ส่งรูปไปไหน</small></div>';return}
+  const dEx=dupExtra(),bl=blurIds(),br=[...scan.broken];
+  const row=(ic,bg,t,sub,n,key,ids,delay)=>`<div class="res" style="animation-delay:${delay}s"><div class="ic" style="background:${bg}">${ic}</div><div class="tx"><h4>${t}</h4><p>${sub}</p></div><div class="go"><div class="n">${n}</div>${n?`<button class="btn sm" data-open="${key}">ดู/เลือก</button>`:''}</div></div>`;
+  box.innerHTML=row(IC.dup,'var(--del)','รูปซ้ำ',scan.groups.length+' กลุ่ม · ซ้ำเกิน '+dEx.length+' รูป',dEx.length,'dup',dEx,0)+
+    row(IC.blur,'linear-gradient(135deg,#f59e0b,#f97316)','รูปไม่ชัด','ปรับความไวด้านบนได้',bl.length,'blur',bl,.08)+
+    row(IC.broken,'linear-gradient(135deg,#334155,#0f172a)','รูปเสีย / เปิดไม่ได้','ไฟล์เสียหายหรือขนาด 0',br.length,'broken',br,.16);
+  $$('[data-open]',box).forEach(b=>b.onclick=()=>openFilter(b.dataset.open))
+}
+$('#scanBtn').onclick=runScan;
+$('#optLimit').onchange=e=>{settings.limit=+e.target.value;store.set('sc_settings',settings)};
+$('#optBlur').oninput=e=>{settings.blur=+e.target.value;$('#blurV').textContent=settings.blur;store.set('sc_settings',settings);if(scan.done)renderScan()};
+
+/* ----- GRID ----- */
+let gf='all';const sel=new Set();
+const FILTERS=[['all','ทั้งหมด'],['undec','ยังไม่ตัดสินใจ'],['dup','ซ้ำ'],['blur','ไม่ชัด'],['broken','รูปเสีย']];
+function openFilter(f){gf=f;sel.clear();
+  const pre=f==='dup'?dupExtra():f==='blur'?blurIds():f==='broken'?[...scan.broken]:[];pre.forEach(i=>sel.add(i));setView('grid')}
+function gridItems(){
+  let l=vis();
+  if(gf==='undec')l=l.filter(p=>!kept.has(p.id));
+  else if(gf==='dup'){const o=[];scan.groups.forEach(g=>g.forEach(i=>o.push(i)));const m=new Map(l.map(p=>[p.id,p]));l=o.map(i=>m.get(i)).filter(Boolean)}
+  else if(gf==='blur'){const s=new Set(blurIds());l=l.filter(p=>s.has(p.id)).sort((a,b)=>scan.res[a.id].lap-scan.res[b.id].lap)}
+  else if(gf==='broken')l=l.filter(p=>scan.broken.has(p.id));
+  return l
+}
+function renderGrid(){
+  $('#chips').innerHTML=FILTERS.map(([k,t])=>`<button class="fc ${gf===k?'on':''}" data-f="${k}">${t}</button>`).join('');
+  $$('#chips .fc').forEach(b=>b.onclick=()=>{gf=b.dataset.f;sel.clear();renderGrid()});
+  const items=gridItems();const g=$('#grid');
+  if(!items.length){g.innerHTML='';$('#gScroll').insertAdjacentHTML('beforeend','');g.innerHTML='<div class="none" style="grid-column:1/-1">'+((['dup','blur','broken'].includes(gf)&&!scan.done)?'ยังไม่ได้สแกน ไปแท็บ “สแกน” ก่อน':'ไม่มีรูปในหมวดนี้')+'</div>'}
+  else{
+    const gcol=['#ff3d71','#3b82f6','#f59e0b','#22c55e','#a855f7','#06b6d4'];
+    g.innerHTML=items.map((p,i)=>{const dg=gf==='dup'?dupGroupOf(p.id):-1;const tg=[];
+      if(kept.has(p.id))tg.push('<span class="tag kp">เก็บ</span>');
+      else if(scan.done){if(scan.broken.has(p.id))tg.push('<span class="tag br">เสีย</span>');else if(gf==='blur')tg.push('<span class="tag bl">ไม่ชัด</span>');else if(dupGroupOf(p.id)>=0&&gf!=='dup')tg.push('<span class="tag">ซ้ำ</span>')}
+      return `<div class="tile ${sel.has(p.id)?'sel':''}" data-id="${esc(p.id)}" style="animation-delay:${Math.min(i,24)*.015}s;${dg>=0?'box-shadow:0 0 0 3px '+gcol[dg%6]:''}"><img loading="lazy" decoding="async" src="${p.src}" alt=""><span class="chk">${IC.check}</span>${tg.join('')}</div>`}).join('')
+  }
+  updBulk()
+}
+$('#grid').addEventListener('click',e=>{const t=e.target.closest('.tile');if(!t)return;const id=t.dataset.id;
+  if(sel.has(id)){sel.delete(id);t.classList.remove('sel')}else{sel.add(id);t.classList.add('sel');vib(8)}updBulk()});
+function updBulk(){$('#bulkN').textContent='เลือก '+sel.size+' รูป';$('#bulk').classList.toggle('show',sel.size>0)}
+$('#gAll').onclick=()=>{const it=gridItems();const all=it.every(p=>sel.has(p.id));it.forEach(p=>all?sel.delete(p.id):sel.add(p.id));renderGrid()};
+$('#xClear').onclick=()=>{sel.clear();renderGrid()};
+const selPhotos=()=>[...sel].map(byId).filter(Boolean);
+$('#xKeep').onclick=()=>{selPhotos().forEach(p=>{kept.add(p.id)});toast('เก็บไว้ '+sel.size+' รูป');sel.clear();saveAll();refresh()};
+$('#xDel').onclick=async()=>{const ps=selPhotos();if(!await confirmBox({title:'ลบ '+ps.length+' รูป?',text:'ย้ายไปที่ “ที่ลบ” ยังกู้คืนได้',ok:'ลบ'}))return;
+  ps.forEach(p=>{bin.unshift(meta(p));kept.delete(p.id)});toast('ย้าย '+ps.length+' รูปไปที่ลบ');sel.clear();saveAll();refresh()};
+$('#xDrive').onclick=async()=>{if(!Drive.ready()){toast('เชื่อม Google Drive ก่อน','err');openSheet();return}
+  const ps=selPhotos();if(!await confirmBox({em:'☁️',title:'ย้าย '+ps.length+' รูปไป Drive?',text:'อัปโหลดขึ้น Google Drive แล้วลบออกจากมือถือ',ok:'ย้ายเลย',cls:'blue'}))return;
+  ps.forEach(p=>{kept.delete(p.id);queueUpload(p)});sel.clear();saveAll();refresh()};
+
+/* ----- BIN ----- */
+let binTab='device';
+function renderBin(){
+  const dev=bin.filter(b=>byId(b.id));if(dev.length!==bin.length){bin=dev;saveAll();chips()}
+  $('#segSl').style.transform=`translateX(${binTab==='device'?0:100}%)`;
+  $$('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===binTab));
+  const g=$('#bgrid');let html='';
+  if(binTab==='device'){
+    html=bin.map((b,i)=>{const p=byId(b.id);return `<div class="bi" style="animation-delay:${Math.min(i,16)*.03}s"><div class="im"><img loading="lazy" src="${p.src}" alt=""><span>ในเครื่อง</span></div><div class="nm">${esc(b.name)}</div><div class="sm2">${fmtSize(b.size)}</div><div class="row"><button data-r="${esc(b.id)}">กู้คืน</button><button class="x" data-x="${esc(b.id)}" aria-label="ลบถาวร"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button></div></div>`}).join('')
+  }else{
+    html=drive.map((d,i)=>`<div class="bi" style="animation-delay:${Math.min(i,16)*.03}s"><div class="im"><img src="${d.thumb||''}" alt=""><span class="dr">Drive</span></div><div class="nm">${esc(d.name)}</div><div class="sm2">${fmtSize(d.size)}${pending.includes(d.id)&&byId(d.id)?' · รอลบในเครื่อง':''}</div><div class="row"><button data-r="${esc(d.id)}">กู้คืน</button><button class="x" data-x="${esc(d.id)}" aria-label="ลบถาวร"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button></div></div>`).join('')
+  }
+  g.innerHTML=html||'<div class="none" style="grid-column:1/-1">'+(binTab==='device'?'ถังขยะว่าง':'ยังไม่มีรูปบน Drive')+'</div>'
+}
+$$('.seg button').forEach(b=>b.onclick=()=>{binTab=b.dataset.t;renderBin()});
+$('#bgrid').addEventListener('click',async e=>{
+  const r=e.target.closest('[data-r]'),x=e.target.closest('[data-x]');
+  if(r)await restoreOne(r.dataset.r);else if(x)await purgeOne(x.dataset.x)});
+async function restoreDrive(d){
+  const local=pending.includes(d.id)&&byId(d.id);
+  if(!local)await Drive.download(d);else pending=pending.filter(i=>i!==d.id);
+  drive=drive.filter(x=>x!==d);Drive.remove(d.driveId).catch(()=>{})
+}
+async function restoreOne(id){
+  try{
+    if(binTab==='device'){bin=bin.filter(b=>b.id!==id);toast('กู้คืนแล้ว')}
+    else{const d=drive.find(x=>x.id===id);if(!d)return;toast('กำลังดึงกลับจาก Drive…');await restoreDrive(d);toast('กู้คืนจาก Drive แล้ว ✅')}
+    saveAll();refresh()
+  }catch(e){toast('กู้คืนไม่สำเร็จ: '+(e.message||e),'err')}
+}
+async function purgeOne(id){
+  if(!await confirmBox({title:'ลบถาวร?',text:binTab==='device'?'รูปจะถูกลบออกจากเครื่องจริง กู้คืนไม่ได้':'รูปจะถูกลบออกจาก Google Drive จริง กู้คืนไม่ได้',ok:'ลบถาวร'}))return;
+  try{
+    if(binTab==='device'){if(!await deviceDelete([id]))return;bin=bin.filter(b=>b.id!==id)}
+    else{const d=drive.find(x=>x.id===id);await Drive.remove(d.driveId);drive=drive.filter(x=>x!==d);
+      if(pending.includes(id)&&byId(id)){await deviceDelete([id])}pending=pending.filter(i=>i!==id)}
+    saveAll();toast('ลบถาวรแล้ว');refresh()
+  }catch(e){toast('ผิดพลาด: '+(e.message||e),'err')}
+}
+$('#restAll').onclick=async()=>{
+  const n=binTab==='device'?bin.length:drive.length;if(!n)return;
+  if(!await confirmBox({em:'♻️',title:'กู้คืนทั้งหมด '+n+' รูป?',text:'',ok:'กู้คืน',cls:'green'}))return;
+  try{
+    if(binTab==='device')bin=[];
+    else{toast('กำลังดึงรูปกลับ…');for(const d of [...drive])await restoreDrive(d)}
+    saveAll();toast('กู้คืนทั้งหมดแล้ว ✅');refresh()
+  }catch(e){saveAll();toast('หยุดกลางทาง: '+(e.message||e),'err');refresh()}
+};
+$('#purgeAll').onclick=async()=>{
+  const n=binTab==='device'?bin.length:drive.length;if(!n)return;
+  if(!await confirmBox({title:'ลบถาวรทั้งหมด '+n+' รูป?',text:binTab==='device'?'ลบออกจากเครื่องจริง กู้คืนไม่ได้':'ลบออกจาก Google Drive จริง (และรูปที่ยังค้างในเครื่อง) กู้คืนไม่ได้',ok:'ลบถาวรทั้งหมด'}))return;
+  try{
+    if(binTab==='device'){if(!await deviceDelete(bin.map(b=>b.id)))return;bin=[]}
+    else{await Promise.all(drive.map(d=>Drive.remove(d.driveId)));const loc=pending.filter(i=>byId(i));drive=[];pending=[];if(loc.length)await deviceDelete(loc)}
+    saveAll();toast('ลบถาวรทั้งหมดแล้ว');confetti();refresh()
+  }catch(e){toast('ผิดพลาด: '+(e.message||e),'err')}
+};
+$('#chipPend').onclick=async()=>{if(await confirmBox({em:'📲',title:'ลบออกจากเครื่อง?',text:'รูปที่ย้ายไป Drive แล้วจะถูกลบจากมือถือ (Android จะถามยืนยันอีกครั้ง)',ok:'ลบจากเครื่อง'}))flushPending()};
+
+/* ----- settings sheet ----- */
+const cancelRef={stop:false};
+function openSheet(){syncSheet();$('#back').classList.add('show');$('#sheet').classList.add('show')}
+function closeSheet(){$('#sheet').classList.remove('show');if(!$('#modal').classList.contains('show'))$('#back').classList.remove('show');cancelRef.stop=true}
+function syncSheet(){
+  const st=$('#drvStat'),ok=Drive.ready(),c=Drive.cfg();
+  $('#cid').value=c.clientId||'';$('#csec').value=c.clientSecret||'';
+  if(!native){st.textContent='🧪 โหมดทดสอบในเบราว์เซอร์: Drive จำลอง (ไม่ได้อัปโหลดจริง)';st.className='stat ok';$('#drvForm').style.display='none';$('#drvConn').style.display='none';$('#drvOut').style.display='none'}
+  else{st.textContent=ok?'✅ เชื่อม Google Drive แล้ว':'⚪ ยังไม่ได้เชื่อม Google Drive';st.className='stat'+(ok?' ok':'');
+    $('#drvForm').style.display=ok?'none':'block';$('#drvConn').style.display=ok?'none':'';$('#drvOut').style.display=ok?'':'none'}
+}
+$('#btnSet').onclick=openSheet;$('#back').onclick=()=>{if(!$('#modal').classList.contains('show'))closeSheet()};
+$('#drvConn').onclick=async()=>{
+  Drive.setClient($('#cid').value.trim(),$('#csec').value.trim());cancelRef.stop=false;
+  try{
+    await Drive.connect(d=>{$('#codeBox').style.display='block';$('#vurl').textContent=d.verification_url;$('#vurl').href=d.verification_url;$('#ucode').textContent=d.user_code;$('#codeSt').textContent='กำลังรอการยืนยัน…'},cancelRef);
+    $('#codeBox').style.display='none';toast('เชื่อม Google Drive สำเร็จ ✅');vib(30);syncSheet()
+  }catch(e){$('#codeBox').style.display='none';toast(e.message||String(e),'err')}
+};
+$('#drvOut').onclick=()=>{Drive.logout();syncSheet();toast('ตัดการเชื่อมต่อแล้ว')};
+$('#resetAll').onclick=async()=>{if(!await confirmBox({title:'รีเซ็ตข้อมูลในแอป?',text:'ล้างรายการ “เก็บไว้” และรายการที่ลบ/Drive ในแอป (ไม่ลบรูปจริง)',ok:'รีเซ็ต'}))return;
+  kept.clear();bin=[];drive=[];pending=[];history=[];saveAll();closeSheet();refresh();toast('รีเซ็ตแล้ว')};
+
+/* ----- nav ----- */
+$$('nav button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+
+/* ============ init ============ */
+async function init(){
+  $('#mode').textContent=native?'':'TEST';
+  const ok=await loadPhotos();if(!ok)return;
+  const ids=new Set(photos.map(p=>p.id));
+  bin=bin.filter(b=>ids.has(b.id));pending=pending.filter(i=>ids.has(i));
+  if(!photos.length){showEmpty('📭','ไม่พบรูปในเครื่อง','ลองถ่ายรูปหรือตรวจสอบสิทธิ์','โหลดใหม่',init);return}
+  saveAll();refresh();
+  if(pending.length)toast('มี '+pending.length+' รูปรอลบออกจากเครื่อง (กดป้ายสีส้มด้านบน)')
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "appId": "com.swipeclean.app",
+  "appName": "ลบรูป By จ๊าบ",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
