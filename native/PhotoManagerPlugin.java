@@ -10,7 +10,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
+import android.view.View;
 import android.provider.MediaStore;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.IntentSenderRequest;
@@ -69,6 +75,48 @@ public class PhotoManagerPlugin extends Plugin {
         JSObject o = new JSObject();
         o.put("granted", getPermissionState(alias()) == PermissionState.GRANTED);
         call.resolve(o);
+    }
+
+    /* ---------- system bar sizes (CSS px) for full-screen layout ---------- */
+    @PluginMethod
+    public void getInsets(final PluginCall call) {
+        try {
+            getActivity().runOnUiThread(() -> {
+                try {
+                    View v = getActivity().getWindow().getDecorView();
+                    WindowInsetsCompat wi = ViewCompat.getRootWindowInsets(v);
+                    float d = getContext().getResources().getDisplayMetrics().density;
+                    int t = 0, b = 0;
+                    if (wi != null) {
+                        Insets i = wi.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                        t = i.top;
+                        b = i.bottom;
+                    }
+                    JSObject o = new JSObject();
+                    o.put("top", Math.round(t / d));
+                    o.put("bottom", Math.round(b / d));
+                    call.resolve(o);
+                } catch (Exception e) {
+                    call.reject(String.valueOf(e.getMessage()));
+                }
+            });
+        } catch (Exception e) {
+            call.reject(String.valueOf(e.getMessage()));
+        }
+    }
+
+    /* ---------- open this app's system settings page ---------- */
+    @PluginMethod
+    public void openSettings(PluginCall call) {
+        try {
+            Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            i.setData(Uri.parse("package:" + getContext().getPackageName()));
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(i);
+            call.resolve();
+        } catch (Exception e) {
+            call.reject(String.valueOf(e.getMessage()));
+        }
     }
 
     /* ---------- list photos ---------- */
