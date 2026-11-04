@@ -22,6 +22,7 @@
 }
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:"MaliLocal","Mali","Noto Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:500;color:var(--ink);background:#f4f1ff;-webkit-user-select:none;user-select:none}
+html,body,button,nav,.tile,.fc{touch-action:manipulation}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
@@ -336,11 +337,12 @@ nav .dot.show{display:grid}
 </div>
 <div class="modal" id="modal"><div class="em" id="mEm">🗑️</div><h3 id="mT"></h3><p id="mP"></p><div class="row"><button class="btn line" id="mNo">ยกเลิก</button><button class="btn red" id="mYes">ตกลง</button></div></div>
 <div id="toasts"></div>
+<div id="evdbg" style="position:fixed;left:8px;top:2px;z-index:99;font:10px monospace;color:#555;pointer-events:none"></div>
 <div id="diag"><div class="dbox"><b>ข้อมูลระบบ (ส่งให้ผู้พัฒนาได้)</b><pre id="diagTxt"></pre><div class="r"><button class="btn sm line" id="diagCopy">คัดลอก</button><button class="btn sm" id="diagClose">ปิด</button></div></div></div>
 
 <script>
 /* ============ helpers ============ */
-const APP_VER='4.0';
+const APP_VER='4.1';
 const LOG=[];
 function dlog(m){try{LOG.push(((performance.now()/1000)|0)+'s '+m);if(LOG.length>120)LOG.shift();console.log('[sc] '+m)}catch(_){}}
 const T=(p,ms)=>new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('timeout')),ms);Promise.resolve(p).then(v=>{clearTimeout(t);res(v)},e=>{clearTimeout(t);rej(e)})});
@@ -837,12 +839,22 @@ $('#permBtn').onclick=()=>{closeSheet();init(true,true)};
 $('#verTxt').textContent='เวอร์ชัน '+APP_VER+(native?'':' (โหมดทดสอบ)');
 (()=>{let n=0,t=0;$('.logo').addEventListener('click',()=>{const now=Date.now();n=now-t<1500?n+1:1;t=now;if(n>=5){n=0;showDiag()}})})();
 
-/* ----- safety net: ถ้า WebView ไม่ยิง click ให้ปุ่ม/ช่องรูป ให้ยิงเอง ----- */
-(()=>{let cur=null;
-  addEventListener('pointerdown',e=>{const t=e.target.closest&&e.target.closest('button,.tile');cur=t?{t,x:e.clientX,y:e.clientY,c:false}:null},true);
-  addEventListener('click',()=>{if(cur)cur.c=true},true);
-  addEventListener('pointerup',e=>{const s=cur;if(!s||Math.hypot(e.clientX-s.x,e.clientY-s.y)>10)return;
-    setTimeout(()=>{if(!s.c&&document.contains(s.t)&&!s.t.disabled){dlog('fallback click on '+(s.t.id||s.t.className));s.c=true;s.t.click()}},600)},true)
+/* ----- safety net: ถ้า WebView ไม่ยิง click ให้ยิงเอง (ใช้ได้ทั้ง pointer และ touch) + ตัวนับเหตุการณ์ไว้ debug ----- */
+(()=>{const C={pd:0,pu:0,pc:0,ts:0,te:0,tc:0,cl:0,fb:0};let cur=null;
+  const upd=()=>{const e=$('#evdbg');if(e)e.textContent='ev '+Object.keys(C).map(k=>k+C[k]).join(' ')};
+  const start=(x,y)=>{if(cur&&Date.now()-cur.t<120)return;cur={x,y,c:false,t:Date.now()}};
+  const fin=(x,y)=>{const s=cur;if(!s||Math.hypot(x-s.x,y-s.y)>14)return;
+    setTimeout(()=>{if(s.c)return;let el=document.elementFromPoint(x,y);el=el&&el.closest&&el.closest('button,.tile,.fc');
+      if(el&&!el.disabled){s.c=true;C.fb++;upd();dlog('fallback click '+(el.id||el.className));el.click()}},350)};
+  const O={capture:true,passive:true};
+  addEventListener('pointerdown',e=>{C.pd++;start(e.clientX,e.clientY);upd()},O);
+  addEventListener('pointerup',e=>{C.pu++;fin(e.clientX,e.clientY);upd()},O);
+  addEventListener('pointercancel',()=>{C.pc++;upd()},O);
+  addEventListener('touchstart',e=>{C.ts++;const t=e.touches[0];if(t)start(t.clientX,t.clientY);upd()},O);
+  addEventListener('touchend',e=>{C.te++;const t=e.changedTouches[0];if(t)fin(t.clientX,t.clientY);upd()},O);
+  addEventListener('touchcancel',()=>{C.tc++;upd()},O);
+  addEventListener('click',()=>{C.cl++;if(cur)cur.c=true;upd()},true);
+  upd();
 })();
 
 window.addEventListener('error',e=>{dlog('ERR '+(e.message||e));try{toast('ข้อผิดพลาด: '+(e.message||e),'err')}catch(_){}});
